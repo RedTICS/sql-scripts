@@ -10,8 +10,9 @@ GO
 
 
 /*
-Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
-*/
+ * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
+ * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
+ */
 CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 WITH EXECUTE AS CALLER
 AS
@@ -53,7 +54,8 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama, 
 			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante,
 			 null as idSolicitudScreening, null as fechaRecibeScreening,
-			 P.observacionesResultados, M.nombre as tipoMuestra, P.baja
+			 P.observacionesResultados, M.nombre as tipoMuestra, P.baja,
+       Pac.idLocalidad, Pac.idProvincia, Pac.telefonoFijo, Pac.telefonoCelular
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
                       dbo.Sys_Paciente AS Pac ON P.idPaciente = Pac.idPaciente INNER JOIN
                       dbo.LAB_Origen AS O ON P.idOrigen = O.idOrigen INNER JOIN
