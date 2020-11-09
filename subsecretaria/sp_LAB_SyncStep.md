@@ -32,3 +32,12 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
   - Paso 1: `exec LAB_SyncStep 1` para marcar el inicio del proceso de sync
   - Paso 2: `exec LAB_ExportaResultadosValidados` para migrar
   - Paso 3: `exec LAB_SyncStep 2` para marcar el fin de la sync y migrar los datos al servidor superior (upstream)
+
+
+## Instalación de un nuevo efector
+
+- Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoEncabezado`` tomando como base `table_encabezado.sql`
+- Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoDetalle`` tomando como base `table_detalle.sql`
+- Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización.
+-
+-
