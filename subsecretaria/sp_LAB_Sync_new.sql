@@ -1,24 +1,26 @@
 /**
- * LAB_Sync
- * Mueve los resultados desde los efectores (remotamente por medio de un linked server) a la tablas
- *    LAB_Temp_ResultadoEncabezado y LAB_Temp_ResultadoDetalle
- * Updates:
- *    - 2020-11-09: se agregan campos a la tabla destino (idLocalidad, idProvincia, telefonoFijo, telefonoCelular) el cual NO esta en el efector
- *                  (es una actualizacion temporal, ya que se esta migrando a un nuevo script que maneja la informacion faltante y el nuevo proceso)
+ * Mueve los registros de las tablas temporales de cada efector a la tabla temporal principal
+ *   LAB_Temp_ResultadoEncabezado y LAB_Temp_ResultadoDetalle
  */
 
-CREATE PROCEDURE [dbo].[LAB_Sync]
+
+/****** Object:  StoredProcedure [dbo].[LAB_Sync]    Script Date: 29/10/2020 02:41:19 ******/
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[LAB_SyncNew]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
 
-       -- SET NOCOUNT ON;
+				-- SET NOCOUNT ON;
 
         PRINT 'INICIO DEL PROCESO';
         PRINT GETDATE();
         DBCC TRACEON (610) WITH NO_INFOMSGS;
 
--- PROTOCOLOS
+        DECLARE @TSQL NVARCHAR(500);
+
+				-- PROTOCOLOS
         CREATE TABLE #LAB_ResultadoEncabezado
             (
               [idProtocolo] [INT] NOT NULL ,
@@ -48,9 +50,13 @@ BEGIN
               [fechaRecibeScreening] [DATETIME] NULL ,
               [observacionesResultados] [NVARCHAR](4000) NULL ,
               [tipoMuestra] [NVARCHAR](500) NULL,
-			  [baja] [bit] NOT NULL default(0)
-            );
--- DETALLES
+    			    [baja] [bit] NOT NULL default(0),
+              [ idLocalidad ] int,
+              [ idProvincia ] int,
+              [ telefonoFijo ] nvarchar(20),
+              [ telefonoCelular ] nvarchar(20)
+            ); 
+				-- DETALLLES
         CREATE TABLE #LAB_ResultadoDetalle
             (
               [idProtocolo] [INT] NOT NULL ,
@@ -82,60 +88,52 @@ BEGIN
                 NOT NULL
                 CONSTRAINT [DF_LAB_Temp_ResultadoDetalle_profesional_val]
                 DEFAULT ( '' )
-            );
+            ); 
+				-- Se toman los efectores que: 
+				-- 		- Tienen ultimoUpdateEfectorFin
+				--		- Si tienen ultimoSyncFechaFin, que el mismo sea + minutosMinimoSyncPrincipal < GETDATE() [Que hayan pasado al menos minutosMinimoSyncPrincipal del ultimo update]
+				-- 		- La fecha de ultimoSyncFechaFin < ultimoUpdateEfectorFin [hubo al menos un update desde el efector desde el ultimo update aca]
+        
+				SELECT * 
+						INTO #EFECTORES_SYNC
+						FROM LAB_EstadoSyncGeneral
+						WHERE 
+								( ultimoUpdateEfectorFin is not null )
+						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND DATEADD(MINUTE, minutosMinimoSyncPrincipal, ultimoSyncFechaFin) < GETDATE() ) )
+						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND ultimoSyncFechaFin < ultimoUpdateEfectorFin ) )
 
-        SELECT *
-        INTO    #SERVERS
-        FROM    LAB_Efector
-        WHERE   Activo = 1 and Online = 1 -- and idEfector=4
-
+                
         WHILE EXISTS ( SELECT   1
-                       FROM     #SERVERS )
+                       FROM     #EFECTORES_SYNC )
             BEGIN
-                DECLARE @idEfector INT,  @srvr NVARCHAR(128) , @bd varchar(50), @retval INT;
+                DECLARE @idEfector INT,  @tablaEncabezado VARCHAR(100), @tablaDetalle VARCHAR(100);
 
                 SELECT TOP 1
-				        @idEfector = #SERVERS.idEfector,
-                        @srvr = #SERVERS.NombreServidor,
-						@bd = #SERVERS.NombreBD
-                FROM    #SERVERS;
+										@idEfector = #EFECTORES_SYNC.idEfector,
+										@tablaEncabezado = #EFECTORES_SYNC.tablaEncabezado,
+										@tablaDetalle = #EFECTORES_SYNC.tablaDetalle
+                FROM  #EFECTORES_SYNC; 
 
-                BEGIN TRY
-                    PRINT GETDATE();
-                    PRINT 'PROCESANDO ' + @srvr + ' ';
-                    EXEC @retval = sys.sp_testlinkedserver @srvr;
-                    PRINT GETDATE();
-                END TRY
-                BEGIN CATCH
-                    SET @retval = SIGN(@@error);
-					SELECT ERROR_NUMBER(), '|', ERROR_MESSAGE();
-                END CATCH;
-
-                IF @retval = 0
-                    BEGIN TRY
-                        DECLARE @OPENQUERY NVARCHAR(4000) ,
-                            @TSQL NVARCHAR(4000) ,
-                            @LinkedServer NVARCHAR(4000);
-		--SELECT @srvr
-		-- traigo protocolos
-                        SET @OPENQUERY = 'SELECT * FROM OPENQUERY([' + @srvr + '],''';
-                        SET @TSQL = 'SELECT * FROM '+ @bd +'.dbo.LAB_Temp_ResultadoEncabezado'')';
-                        INSERT  INTO #LAB_ResultadoEncabezado
-                                EXEC ( @OPENQUERY + @TSQL );
-		-- traigo detalles
-		--SET @OPENQUERY = 'SELECT * FROM OPENQUERY('+ @srvr + ','''
-                        SET @TSQL = 'SELECT * FROM '+ @bd +'.dbo.LAB_Temp_ResultadoDetalle'')';
-                        INSERT  INTO #LAB_ResultadoDetalle
-                                EXEC ( @OPENQUERY + @TSQL );
-                    END TRY
-                    BEGIN CATCH
-							  SELECT
-								ERROR_NUMBER() AS ErrorNumber
-								,ERROR_MESSAGE() AS ErrorMessage;
+								BEGIN TRY	
+                  -- Marco que comenzo migracion de este efector
+                  SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaInicio=GETDATE(), ultimoSyncFechaFin=NULL where idEfector=' + CAST(@idEfector as VARCHAR(10))
+                  EXEC ( @TSQL )
+									-- traigo protocolos
+									SET @TSQL = 'INSERT INTO #LAB_ResultadoEncabezado SELECT * FROM '+ @tablaEncabezado;
+									EXEC ( @TSQL ); 		
+			
+									-- traigo detalles
+									SET @TSQL = 'INSERT INTO #LAB_ResultadoDetalle SELECT * FROM '+ @tablaDetalle;
+									EXEC ( @TSQL ); 
+								END TRY
+								BEGIN CATCH
+							  SELECT   
+								ERROR_NUMBER() AS ErrorNumber  
+								,ERROR_MESSAGE() AS ErrorMessage; 
                     END CATCH;
-	--if @retval <> 0
-	  --raiserror(@srvr , 16, 2 );
-                DELETE  FROM #SERVERS
+								--if @retval <> 0
+								--raiserror(@srvr , 16, 2 );
+                DELETE  FROM #EFECTORES_SYNC
                 WHERE   idEfector = @idEfector;
             END;
 
@@ -175,22 +173,22 @@ BEGIN
                       ,[observacionesResultados]
                       ,[tipoMuestra]
                       ,[baja]
-                      , NULL as [idLocalidad]
-                      , NULL as [idProvincia]
-                      , NULL as [telefonoFijo],
-                      , NULL as [telefonoCelular]
+                      ,[idLocalidad]
+                      ,[idProvincia]
+                      ,[telefonoFijo],
+                      ,[telefonoCelular]
                 FROM    #LAB_ResultadoEncabezado;
         INSERT  INTO LAB_Temp_ResultadoDetalle
                 SELECT  *
                 FROM    #LAB_ResultadoDetalle;
 
-        DROP TABLE #SERVERS;
+        DROP TABLE #EFECTORES_SYNC;
         DROP TABLE #LAB_ResultadoEncabezado;
         DROP TABLE #LAB_ResultadoDetalle;
 
         PRINT GETDATE();
         PRINT 'INCIO DE SP DE EXPORTACION';
-        --EXEC LAB_ExportacionResultados;
+        --EXEC LAB_ExportacionResultados; 
 		EXEC LAB_ImportaResultados;
         PRINT GETDATE();
         PRINT 'FIN DE SP DE EXPORTACION';
@@ -208,7 +206,12 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET
                     Target.FechaActualizacion = Source.FechaActualizacion;
+        -- Marco que finalizo la migracion de este efector
+        SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaFin=GETDATE() where idEfector=' + CAST(@idEfector as VARCHAR(10))
+        EXEC ( @TSQL )
 
 		DBCC TRACEOFF (610) WITH NO_INFOMSGS;
 
     END;
+
+

@@ -1,6 +1,13 @@
-USE [SIPS]
-GO
-/****** Object:  StoredProcedure [dbo].[LAB_ImportaResultados]    Script Date: 06/11/2020 21:50:58 ******/
+/**
+ * LAB_ImportaResultados_new
+ * Importa los resultados desde la nueva metodologia planteada en Noviembre de 2020 en la cual cada efector sube los datos
+ *    al servidor central (a una tabla por efector), luego se procesan los resultados de los efectores y se inyectan en una tabla
+ *		temporal general, y desde allí este stored toma los datos para inyectarlos finalmente en las tablas finales
+ * Ultimo update: 2020-11-09
+ */
+
+
+/****** Object:  StoredProcedure [dbo].[LAB_ImportaResultados]    Script Date: 06/11/2020 8:21:39 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8,9 +15,7 @@ GO
 -- =============================================
 -- Author: Julio Rojas
 -- Create date: 15/09/2016
--- Description: Importa los resultados de laboratorio de las tablas temporales a las definitivas
--- 20180724: Agrego la columna CDA en NULL para que no de errores en el insert
--- 20201106: Agrego temporalmente provincia, localidad, telefono fijo y telefono celular en null
+-- Description: Importa los resultados de laboratorio de las tablas temporales a las definitivas 20180724: Agrego la columna CDA en NULL para que no de errores en el insert
 -- =============================================
 ALTER PROCEDURE [dbo].[LAB_ImportaResultados]
 WITH EXECUTE AS CALLER
@@ -119,11 +124,12 @@ WHILE EXISTS ( Select 1 from @TableAux)
   --------------------------------------------------------------------------------------------------------------------------------------------
   ---Despues de haber verificado la existencia de datos anteriores para el protcolo actual; ingresa los datos traidos.
   --------------------------------------------------------------------------------------------------------------------------------------------
+
   INSERT INTO LAB_ResultadoEncabezado
   select idProtocolo, idEfector, apellido, nombre, edad, unidadEdad, fechaNacimiento, sexo, numeroDocumento, fecha, fecha1, domicilio,
  HC,  prioridad, origen, numero, hiv, solicitante, sector, sala, cama, embarazo, EfectorSolicitante, idSolicitudScreening, fechaRecibeScreening,
  observacionesResultados, tipoMuestra, NULL AS cda
-  , NULL as idLocalidad, NULL as idProvincia, NULL as telefonoFijo, NULL as telefonoCelular -- Agregado 2020-11-09
+ , idLocalidad, idProvincia, telefonoFijo, telefonoCelular -- Agregado 2020-11-09
   from LAB_Temp_ResultadoEncabezado WHERE idProtocolo = @idProtocolo and idEfector=@idEfector
 
   INSERT INTO LAB_ResultadoDetalle
