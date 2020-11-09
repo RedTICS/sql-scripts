@@ -39,5 +39,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoEncabezado`` tomando como base `table_encabezado.sql`
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoDetalle`` tomando como base `table_detalle.sql`
 - Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización.
--
--
+- Crear una tabla en el efector usando como base `efector_LAB_SyncStatus.sql`
+- Crear una tabla en el efector usando como base `efector_LAB_SyncConfig.sql`
+- Crear un linked server con el servidor de la subsecretaria (10.1.62.53)
+- Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde y el linked server, y base de datos, al cual comunicarse para hacer el upload de los laboratorios
