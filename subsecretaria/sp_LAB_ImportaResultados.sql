@@ -12,7 +12,7 @@ GO
 -- 20180724: Agrego la columna CDA en NULL para que no de errores en el insert
 -- 20201106: Agrego temporalmente provincia, localidad, telefono fijo y telefono celular en null
 -- =============================================
-ALTER PROCEDURE [dbo].[LAB_ImportaResultados]
+CREATE PROCEDURE [dbo].[LAB_ImportaResultados]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
@@ -49,7 +49,11 @@ DECLARE @TableAux AS TABLE
  [fechaRecibeScreening]  [datetime] null ,
  [observacionesResultados]  [nvarchar](4000)  NULL,
  [tipoMuestra]  [nvarchar](500)  NULL ,
- [baja] [bit] NOT NULL DEFAULT (0)
+ [baja] [bit] NOT NULL DEFAULT (0),
+ [idLocalidad] [INT],
+ [idProvincia] [INT],
+ [telefonoFijo] [nvarchar](20),
+ [telefonoCelular] [nvarchar](20)
 )
 
 DECLARE @TableAuxDetalle AS TABLE
