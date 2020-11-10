@@ -39,6 +39,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
 - Deshabilitar la sincronización del efector de la tabla SIPS.dbo.LAB_Efector (Activo=0 && Online=0)
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoEncabezado`` tomando como base `table_encabezado.sql`
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoDetalle`` tomando como base `table_detalle.sql`
+- Agregar permisos de select, insert, update, delete al usuario `linked_desde_efector` para las dos tablas creadas (encabezado y detalle)
 - Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización.
 - Crear una tabla en el efector usando como base `efector_LAB_SyncStatus.sql`
 - Crear una tabla en el efector usando como base `efector_LAB_SyncConfig.sql`
