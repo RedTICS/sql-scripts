@@ -9,7 +9,7 @@ GO
 /*
 Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
 */
-ALTER PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
+CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
