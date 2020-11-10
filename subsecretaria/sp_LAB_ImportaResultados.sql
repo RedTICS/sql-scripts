@@ -127,7 +127,7 @@ WHILE EXISTS ( Select 1 from @TableAux)
   select idProtocolo, idEfector, apellido, nombre, edad, unidadEdad, fechaNacimiento, sexo, numeroDocumento, fecha, fecha1, domicilio,
  HC,  prioridad, origen, numero, hiv, solicitante, sector, sala, cama, embarazo, EfectorSolicitante, idSolicitudScreening, fechaRecibeScreening,
  observacionesResultados, tipoMuestra, NULL AS cda
-  , NULL as idLocalidad, NULL as idProvincia, NULL as telefonoFijo, NULL as telefonoCelular -- Agregado 2020-11-09
+  , idLocalidad, idProvincia, telefonoFijo, telefonoCelular -- Agregado 2020-11-09
   from LAB_Temp_ResultadoEncabezado WHERE idProtocolo = @idProtocolo and idEfector=@idEfector
 
   INSERT INTO LAB_ResultadoDetalle
