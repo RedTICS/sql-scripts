@@ -1,10 +1,3 @@
-USE [SIPS]
-GO
-/****** Object:  StoredProcedure [dbo].[LAB_ImportaResultados]    Script Date: 06/11/2020 21:50:58 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 -- =============================================
 -- Author: Julio Rojas
 -- Create date: 15/09/2016
@@ -111,7 +104,6 @@ WHILE EXISTS ( Select 1 from @TableAux)
   WHILE EXISTS (Select 1 from @TableAuxDetalle)
   BEGIN
    SELECT top 1 @idProtocolo=idProtocolo, @idEfector=idEfector, @idDetalleProtocolo=idDetalleProtocolo FROM @TableAuxDetalle
-   -- print @idDetalleProtocolo
    IF EXISTS ( SELECT  1 FROM LAB_ResultadoDetalle WHERE idProtocolo = @idProtocolo and idEfector=@idEfector and idDetalleProtocolo=@idDetalleProtocolo  )
    begin
     -- borra solo los detalles que ya existen por si se modificó.
