@@ -25,7 +25,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
 - Migrar los datos desde las tablas indicadas en EstadoSyncGeneral.tabla_encabezado y EstadoSyncGeneral.tabla_detalle
 - Actualizar los campos EstadoSyncGeneral.ultimo_sync_fecha_fin con la fecha actual, EstadoSyncGeneral.ultimo_sync_registros con la cantidad de registros migrados (encabezados? o encabezados + detalle)
 
-## Pasos de configuración en hospital periferico
+## Pasos de configuración en el efector
 
 - Crear el stored procedure LAB_SyncStep
 - Crear un JOB que contenga los siguientes steps
@@ -41,7 +41,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoDetalle`` tomando como base `table_detalle.sql`
 - Agregar permisos de select, insert, update, delete al usuario `linked_desde_efector` para las dos tablas creadas (encabezado y detalle)
 - Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización.
-- Crear una tabla en el efector usando como base `efector_LAB_SyncStatus.sql`
-- Crear una tabla en el efector usando como base `efector_LAB_SyncConfig.sql`
+- Crear una tabla en el efector usando como base `efectores/unificados/LAB_SyncStatus.sql`
+- Crear una tabla en el efector usando como base `efectores/unificados/LAB_SyncConfig.sql`
 - Crear un linked server con el servidor de la subsecretaria (10.1.62.53)
-- Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde y el linked server, y base de datos, al cual comunicarse para hacer el upload de los laboratorios
+- Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde, el linked server, base de datos (generalmente SIPS.dbo), y la cantidad de dias a sincronizar hacia atrás.
