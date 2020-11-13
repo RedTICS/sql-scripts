@@ -4,28 +4,28 @@
 
 | Efector | idEfector | Servidor | DB | Version de scripts de migración |
 |---------|-----------|----------|----|---------------------------------|
-| Centenario | 1 |	SQLCENTENARIO	| SIntegralH | |
-| Plottier | 2|SQLPLOTTIER|SIntegralH| 1.5 |
-| Senillosa | 3	|SQLSENILLOSA	|SIntegralH | |
-| Rincon | 4|	RINCON	|SIntegralH | |
-| Chañar | 5|	SQLCHANAR	|SIntegralH| |
+| Centenario | 1 |	SQLCENTENARIO - 10.3.72.18	| SIntegralH |  |
+| Plottier | 2|SQLPLOTTIER - 10.2.8.17 |SIntegralH| 1.5 |
+| Senillosa | 3	|SQLSENILLOSA	- 10.4.8.8 |SIntegralH | |
+| Rincon | 4|	RINCON - 10.6.8.16	|SIntegralH | |
+| Chañar | 5|	SQLCHANAR - 10.12.8.9	|SIntegralH| |
 | Añelo | 6	|10.1.62.53	|SIPSAnelo| |
 | Chocon |7	|10.1.62.53	|SIPSChocon| |
-| Zapala | 33	|SRVZAPALA	|SIntegralH| |
-| Loncopue | 37	|SQLLONCOPUE	|SIntegralH | |
-| Alumine | 40|	SQLALUMINE	|SIntegralH| |
-| Chosmalal | 51|	CHOSMA	|SIntegralH | |
-| Buta | 53	|HTALBUTA	|SIntegralH | |
-| Andacollo | 55|	SRVANDACOLLO	|SIntegralH ||
-| San Martín | 70	|SANMARTIN	| SIntegralH ||
-| Junin | 71|	SQLJUNIN	|SIntegralH ||
-| Villa | 73|	VILLA	|SIntegralH ||
-| Piedra | 185	| SQLPIEDRA	|SIntegralH ||
-| Picun | 187	|HTAL_PICUN	|SIntegralH ||
-| Cutral Co | 188	|CUTRALCO	|SIntegralH | 1.5 |
+| Zapala | 33	|SRVZAPALA	- ? |SIntegralH| |
+| Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | |
+| Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |
+| Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | |
+| Buta | 53	|HTALBUTA	- 10.25.72.110 |SIntegralH | |
+| Andacollo | 55|	SRVANDACOLLO	- 10.13.72.8 |SIntegralH ||
+| San Martín | 70	|SANMARTIN - 10.10.8.21	| SIntegralH ||
+| Junin | 71|	SQLJUNIN	- 10.9.72.25 |SIntegralH ||
+| Villa | 73|	VILLA	- 10.20.8.19 |SIntegralH ||
+| Piedra | 185	| SQLPIEDRA	- 10.19.8.8 |SIntegralH ||
+| Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH ||
+| Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5 |
 | General | 205	|SQLAGL	|SIntegralHLab ||
-| Bouquet | 216	|BOUQUET	|SIntegralH ||
-| Heller | 221	|SQLHELLER	|SIntegralH ||
+| Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH ||
+| Heller | 221	|SQLHELLER - ?	|SIntegralH ||
 
 ## Sincronización de laboratorio con efectores
 
