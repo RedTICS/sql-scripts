@@ -11,7 +11,7 @@ GO
 -- Update: 2016-09-27 - Julio: Agrego columna de baja en los encabezados y modifico select de protocolos
 -- Update: 2018-12-10 - Julio: Se hizo un hotfix para que no reasigne pacientes si el tipo_servicio <> 4, se agrego ese filtro en el union all de "Reasignacion de pacientes"
 -- =============================================
-ALTER PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
+CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 AS
 BEGIN
 

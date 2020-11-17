@@ -177,7 +177,7 @@ BEGIN
                       ,[baja]
                       , NULL as [idLocalidad]
                       , NULL as [idProvincia]
-                      , NULL as [telefonoFijo],
+                      , NULL as [telefonoFijo]
                       , NULL as [telefonoCelular]
                 FROM    #LAB_ResultadoEncabezado;
         INSERT  INTO LAB_Temp_ResultadoDetalle

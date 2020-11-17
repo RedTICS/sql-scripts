@@ -1,21 +1,25 @@
-
+/**
+ * Stored para ejecutar antes y despues de cada exportacion de laboratorio
+ * Paso 1: marca inicio de script
+ * Paso 2: marca fin de script y sube los resultados a SIPS central
+ */
 CREATE PROCEDURE dbo.LAB_SyncStep
 	@paso as INT -- Paso 1 es inicio / 2 se creo tabla temporal local => migrar a remoto + marcar procesos
-	WITH EXECUTE AS CALLER	
-AS 
+	WITH EXECUTE AS CALLER
+AS
 SET NOCOUNT ON;
 
 DECLARE @error int, @rowcount int;
 
 
 -- Paso 1: Marcar en la tabla LAB_SyncStatus que comenzo el proceso
-if (@paso=1) 
+if (@paso=1)
 begin
 	print 'Marcando inicio de sync local';
 	INSERT INTO dbo.LAB_SyncStatus (fechaInicio) values (GETDATE())
 end
 
--- Paso 2: 
+-- Paso 2:
 -- 		Marcar en la tabla LAB_SyncStatus que finalizo el proceso de generación de tabla temp
 --		Migrar datos a server upstream (tomando como config tabla LAB_SyncConfig)
 --		Marcar en la tabla LAB_SyncStatus que finalizo el upload
@@ -35,17 +39,17 @@ begin
 	if (@rowcount=0)
 	begin
 		print 'No hay sync iniciada para actualizar';
-		RETURN;	
+		RETURN;
 	end
-	
-	
+
+
 	if (@error>0)
 	begin
 		print 'Error al ejecutar el query UPDATE ' + @error + ': ' + @rowcount;
 		RETURN
 	end
-	
-	
+
+
 	-- Obtengo configuracion de upstream server
 	DECLARE @servidorUpstream VARCHAR(100);
 	DECLARE @dbUpstream VARCHAR(100);
@@ -64,7 +68,7 @@ begin
 	-- Obtengo el servidor upstream (superior - central) y el efector que soy
 	select top 1 @servidorUpstream=servidorUpstream, @dbUpstream=dbUpstream, @idEfector=idEfector from LAB_SyncConfig
 	set @upstreamFullPath = QUOTENAME(@servidorUpstream) + '.' + @dbUpstream + '.';
-	
+
   set @linkedQueryStart = 'SELECT * FROM OPENQUERY([' + @servidorUpstream + '], ''';
 	set @linkedQueryEnd = ''')';
   set @linkedExec = N'EXEC (@sql) AT ' + QUOTENAME(@servidorUpstream) + N';';
@@ -73,9 +77,9 @@ begin
 	set @sql = 'select @upstreamTablaEncabezado=tablaEncabezado, @upstreamTablaDetalle=tablaDetalle, @upstreamUltimoSyncFechaInicio=ultimoSyncFechaInicio, @upstreamUltimoSyncFechaFin=ultimoSyncFechaFin, @upstreamMinutosMinimoSyncEfector=minutosMinimoSyncEfector from ' + @upstreamFullPath + 'LAB_EstadoSyncGeneral where idEfector=' + CAST(@idEfector as varchar(10));
 
 
-	EXEC sys.sp_executesql @sql, 
-			N'@upstreamTablaEncabezado VARCHAR(100) OUTPUT, @upstreamTablaDetalle VARCHAR(100) OUTPUT, @upstreamUltimoSyncFechaInicio DateTime OUTPUT, @upstreamUltimoSyncFechaFin DateTime OUTPUT, @upstreamMinutosMinimoSyncEfector INT OUTPUT', 
-			@upstreamTablaEncabezado=@upstreamTablaEncabezado OUTPUT, 
+	EXEC sys.sp_executesql @sql,
+			N'@upstreamTablaEncabezado VARCHAR(100) OUTPUT, @upstreamTablaDetalle VARCHAR(100) OUTPUT, @upstreamUltimoSyncFechaInicio DateTime OUTPUT, @upstreamUltimoSyncFechaFin DateTime OUTPUT, @upstreamMinutosMinimoSyncEfector INT OUTPUT',
+			@upstreamTablaEncabezado=@upstreamTablaEncabezado OUTPUT,
 			@upstreamTablaDetalle=@upstreamTablaDetalle OUTPUT,
 			@upstreamUltimoSyncFechaInicio=@upstreamUltimoSyncFechaInicio OUTPUT,
 			@upstreamUltimoSyncFechaFin=@upstreamUltimoSyncFechaFin OUTPUT,
@@ -83,7 +87,7 @@ begin
 
 
 	-- Si upstreamUltimoSyncFechaFin es null => esta migrando ahora => para ejecucion
-	if (@upstreamUltimoSyncFechaInicio is not null and @upstreamUltimoSyncFechaFin is null) 
+	if (@upstreamUltimoSyncFechaInicio is not null and @upstreamUltimoSyncFechaFin is null)
 	begin
 		print 'El servidor upstream esta actualizando => aborto upstream sync';
 		return;
@@ -105,10 +109,10 @@ begin
   EXEC sys.sp_executesql @sql
 
 
-	-- Migración a upstream	
+	-- Migración a upstream
 	--BEGIN TRANSACTION; -- No puedo realizar transacciones en linked
-	
-	
+
+
 	-- Migración de encabezado
 
 	-- Borrar temp upstream
@@ -144,7 +148,7 @@ begin
 	END TRY
 	BEGIN CATCH
 	END CATCH
-	
+
 	set @sql = 'insert into ' + @upstreamFullPath + @upstreamTablaDetalle + ' select * from LAB_Temp_ResultadoDetalle';
   EXEC sys.sp_executesql @sql
 	-- Hubo error?
@@ -155,11 +159,11 @@ begin
 		print 'Error al ejecutar el query sync upstream (detalle records) ' + @error + ': ' + @rowcount;
 		RETURN
 	end
-	
+
 	--COMMIT TRANSACTION;
-	
+
 	UPDATE dbo.LAB_SyncStatus set fechaFinUpload=GETDATE() where  id = (select top 1 id from dbo.LAB_SyncStatus where fechaFinUpload is null order by id desc)
-	
+
 	-- Indico que el fin el upstream sync en la tabla upstream
 	set @sql = 'update ' + @upstreamFullPath + 'LAB_EstadoSyncGeneral set ultimoUpdateEfectorFin=GETDATE() where idEfector=' + CAST(@idEfector as varchar(10))
   EXEC sys.sp_executesql @sql

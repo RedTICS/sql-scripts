@@ -55,7 +55,7 @@ BEGIN
               [ idProvincia ] int,
               [ telefonoFijo ] nvarchar(20),
               [ telefonoCelular ] nvarchar(20)
-            ); 
+            );
 				-- DETALLLES
         CREATE TABLE #LAB_ResultadoDetalle
             (
@@ -88,21 +88,21 @@ BEGIN
                 NOT NULL
                 CONSTRAINT [DF_LAB_Temp_ResultadoDetalle_profesional_val]
                 DEFAULT ( '' )
-            ); 
-				-- Se toman los efectores que: 
+            );
+				-- Se toman los efectores que:
 				-- 		- Tienen ultimoUpdateEfectorFin
 				--		- Si tienen ultimoSyncFechaFin, que el mismo sea + minutosMinimoSyncPrincipal < GETDATE() [Que hayan pasado al menos minutosMinimoSyncPrincipal del ultimo update]
 				-- 		- La fecha de ultimoSyncFechaFin < ultimoUpdateEfectorFin [hubo al menos un update desde el efector desde el ultimo update aca]
-        
-				SELECT * 
+
+				SELECT *
 						INTO #EFECTORES_SYNC
 						FROM LAB_EstadoSyncGeneral
-						WHERE 
+						WHERE
 								( ultimoUpdateEfectorFin is not null )
 						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND DATEADD(MINUTE, minutosMinimoSyncPrincipal, ultimoSyncFechaFin) < GETDATE() ) )
 						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND ultimoSyncFechaFin < ultimoUpdateEfectorFin ) )
 
-                
+
         WHILE EXISTS ( SELECT   1
                        FROM     #EFECTORES_SYNC )
             BEGIN
@@ -112,24 +112,24 @@ BEGIN
 										@idEfector = #EFECTORES_SYNC.idEfector,
 										@tablaEncabezado = #EFECTORES_SYNC.tablaEncabezado,
 										@tablaDetalle = #EFECTORES_SYNC.tablaDetalle
-                FROM  #EFECTORES_SYNC; 
+                FROM  #EFECTORES_SYNC;
 
-								BEGIN TRY	
+								BEGIN TRY
                   -- Marco que comenzo migracion de este efector
                   SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaInicio=GETDATE(), ultimoSyncFechaFin=NULL where idEfector=' + CAST(@idEfector as VARCHAR(10))
                   EXEC ( @TSQL )
 									-- traigo protocolos
 									SET @TSQL = 'INSERT INTO #LAB_ResultadoEncabezado SELECT * FROM '+ @tablaEncabezado;
-									EXEC ( @TSQL ); 		
-			
+									EXEC ( @TSQL );
+
 									-- traigo detalles
 									SET @TSQL = 'INSERT INTO #LAB_ResultadoDetalle SELECT * FROM '+ @tablaDetalle;
-									EXEC ( @TSQL ); 
+									EXEC ( @TSQL );
 								END TRY
 								BEGIN CATCH
-							  SELECT   
-								ERROR_NUMBER() AS ErrorNumber  
-								,ERROR_MESSAGE() AS ErrorMessage; 
+							  SELECT
+								ERROR_NUMBER() AS ErrorNumber
+								,ERROR_MESSAGE() AS ErrorMessage;
                     END CATCH;
 								--if @retval <> 0
 								--raiserror(@srvr , 16, 2 );
@@ -175,7 +175,7 @@ BEGIN
                       ,[baja]
                       ,[idLocalidad]
                       ,[idProvincia]
-                      ,[telefonoFijo],
+                      ,[telefonoFijo]
                       ,[telefonoCelular]
                 FROM    #LAB_ResultadoEncabezado;
         INSERT  INTO LAB_Temp_ResultadoDetalle
@@ -188,7 +188,7 @@ BEGIN
 
         PRINT GETDATE();
         PRINT 'INCIO DE SP DE EXPORTACION';
-        --EXEC LAB_ExportacionResultados; 
+        --EXEC LAB_ExportacionResultados;
 		EXEC LAB_ImportaResultados;
         PRINT GETDATE();
         PRINT 'FIN DE SP DE EXPORTACION';
@@ -213,5 +213,3 @@ BEGIN
 		DBCC TRACEOFF (610) WITH NO_INFOMSGS;
 
     END;
-
-
