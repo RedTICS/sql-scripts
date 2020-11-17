@@ -105,7 +105,7 @@ begin
 
 
 	-- Indico que inicio el upstream sync en la tabla upstream
-	set @sql = 'update ' + @upstreamFullPath + 'LAB_EstadoSyncGeneral set ultimoUpdateEfectorInicio=GETDATE(), ultimoSyncRegistrosEncabezado=' + CAST(@cantidadRegistrosEncabezado as VARCHAR(10)) + ', ultimoSyncRegistrosDetalle=' + CAST(@cantidadRegistrosDetalle as VARCHAR(10)) + ' where idEfector=' + CAST(@idEfector as varchar(10))
+	set @sql = 'update ' + @upstreamFullPath + 'LAB_EstadoSyncGeneral set ultimoUpdateEfectorInicio=GETDATE(), ultimoUpdateEfectorFin=NULL, ultimoSyncRegistrosEncabezado=' + CAST(@cantidadRegistrosEncabezado as VARCHAR(10)) + ', ultimoSyncRegistrosDetalle=' + CAST(@cantidadRegistrosDetalle as VARCHAR(10)) + ' where idEfector=' + CAST(@idEfector as varchar(10))
   EXEC sys.sp_executesql @sql
 
 
