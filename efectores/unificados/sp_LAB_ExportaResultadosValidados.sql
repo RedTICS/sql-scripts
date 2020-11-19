@@ -113,7 +113,7 @@ FROM                 LAB_Temp_ResultadoEncabezado as P inner join
                      LAB_Item AS I1 ON DP.idSubItem = I1.idItem AND DP.idEfector = I1.idEfector INNER JOIN
                      LAB_Area AS A ON I.idArea = A.idArea INNER JOIN
                      Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector
-                     LEFT JOIN Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
+                     INNER JOIN Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
 WHERE idUsuarioValida=0
 --and DP.idProtocolo IN  (SELECT  idProtocolo   FROM        LAB_Temp_ResultadoEncabezado )
 

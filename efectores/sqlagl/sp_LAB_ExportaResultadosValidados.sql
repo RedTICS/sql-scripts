@@ -30,8 +30,8 @@ SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
 WHERE
 (P.baja = 0) and (P.idTipoServicio<4)
-and ((CONVERT(varchar, fechaValida, 112) >=  CONVERT(varchar,GETDATE()-@dias, 112)
-or  CONVERT(varchar, fechaValidaObservacion, 112) >= CONVERT(varchar,GETDATE()-@dias, 112)))
+and (CONVERT(varchar(8), fechaValida, 112) >=  CONVERT(varchar(8),GETDATE()-@dias, 112)
+or  CONVERT(varchar(8), fechaValidaObservacion, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112))
 
 --and ((CONVERT(varchar, fechaValida, 112) between '20160407' and '20160415' ) or  CONVERT(varchar, fechaValidaObservacion, 112) between '20160407' and '20160415' )
 
@@ -77,8 +77,12 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              Pac.fechaNacimiento, 103) AS fechaNacimiento, P.sexo, Pac.numeroDocumento, CONVERT(varchar(10), P.fecha, 103) AS fecha, P.fecha AS fecha1,
              Pac.referencia  AS domicilio, Pac.historiaClinica AS HC, Pri.nombre AS prioridad, O.nombre AS origen, dbo.NumeroProtocolo(P.idProtocolo) AS numero,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama,
-			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante, null as idSolicitudScreening, null as fechaRecibeScreening,
-			 P.observacionesResultados, M.nombre as tipoMuestra, P.baja
+			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante, 
+       null as idSolicitudScreening, null as fechaRecibeScreening,
+      LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
+			-- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
+       M.nombre as tipoMuestra, P.baja,
+       Pac.idLocalidad, Pac.idProvincia, Pac.telefonoFijo, Pac.telefonoCelular
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
                       dbo.Sys_Paciente AS Pac ON P.idPaciente = Pac.idPaciente INNER JOIN
                       dbo.LAB_Origen AS O ON P.idOrigen = O.idOrigen INNER JOIN

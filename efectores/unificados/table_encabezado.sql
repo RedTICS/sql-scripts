@@ -28,6 +28,10 @@ CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoEncabezado](
 	[observacionesResultados] [nvarchar](4000) NULL,
 	[tipoMuestra] [nvarchar](500) NULL,
 	[baja] [bit] NOT NULL,
+	[idLocalidad] INT,
+	[idProvincia] INT,
+	[telefonoFijo] [nvarchar](20),
+	[telefonoCelular] [nvarchar](20)
  CONSTRAINT [PK_Tmp_<Efector>ResultadoEncabezado] PRIMARY KEY CLUSTERED
 (
 	[idProtocolo] ASC,
