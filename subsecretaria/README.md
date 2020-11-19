@@ -9,8 +9,8 @@
 | Senillosa | 3	|SQLSENILLOSA	- 10.4.8.8 |SIntegralH | 1.5(B) ✓ |
 | Rincon | 4|	RINCON - 10.6.8.16	|SIntegralH | 1.5(B) ✓|
 | Chañar | 5|	SQLCHANAR - 10.12.8.9	|SIntegralH| 1.5(B) ✓|
-| Añelo | 6	|10.1.62.53	|SIPSAnelo| ✓|
-| Chocon |7	|10.1.62.53	|SIPSChocon| |
+| Añelo | 6	|10.1.62.53	|SIPSAnelo| 1.5(B) ✓|
+| Chocon |7	|10.1.62.53	|SIPSChocon| 1.5(B) ✓|
 | Zapala | 33	|SRVZAPALA	- 10.8.8.15 |SIntegralH| 1.5(A) ✓|
 | Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | |
 | Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |

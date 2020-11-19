@@ -1,27 +1,22 @@
-USE [SIntegralH]
-GO
-/****** Object:  StoredProcedure [dbo].[LAB_ExportaResultadosValidados]    Script Date: 09/11/2020 10:25:10 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
+/*
+ * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
+ * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
+ * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
+ */
 CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
-/*
-Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
-*/
+
 TRUNCATE TABLE LAB_Temp_ResultadoEncabezado
 TRUNCATE TABLE LAB_Temp_ResultadoDetalle
 
 declare  @dias int
-set @dias=3 --CAMBIAR ACA LOS DIAS A RESTAR DESDE EL DIA DE HOY
-
+select top 1 @dias=diasASincronizar from LAB_SyncConfig
 
 create table #TableFinal (idProtocolo int)
 
---select GETDATE()-150
 
 insert into #TableFinal
 --select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
@@ -30,7 +25,7 @@ SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
 WHERE
 (P.baja = 0) and (P.idTipoServicio<4)
-and (CONVERT(varchar, fechaValida, 112) >=  CONVERT(varchar,GETDATE()-@dias, 112))
+and (CONVERT(varchar(8), fechaValida, 112) >=  CONVERT(varchar(8),GETDATE()-@dias, 112))
 --or  CONVERT(varchar, fechaValidaObservacion, 112) >= CONVERT(varchar,GETDATE()-@dias, 112)))
 
 --and ((CONVERT(varchar, fechaValida, 112) between '20160407' and '20160415' ) or  CONVERT(varchar, fechaValidaObservacion, 112) between '20160407' and '20160415' )

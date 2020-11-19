@@ -1,18 +1,9 @@
-USE [SIntegralH]
-GO
-
-/****** Object:  StoredProcedure [dbo].[LAB_ExportaResultadosValidados]    Script Date: 05/11/2020 21:25:25 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 /*
+ * Version: 1.5 (B - vta_LAB_Antibiograma no tiene el usuario que lo valido)
  * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
  * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
- * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores
+ * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
  */
 CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 WITH EXECUTE AS CALLER
@@ -23,7 +14,7 @@ TRUNCATE TABLE LAB_Temp_ResultadoEncabezado
 TRUNCATE TABLE LAB_Temp_ResultadoDetalle
 
 declare  @dias int
-set @dias=3
+select top 1 @dias=diasASincronizar from LAB_SyncConfig
 
 create table #TableFinal (idProtocolo int)
 
@@ -47,7 +38,8 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama,
 			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante,
 			 null as idSolicitudScreening, null as fechaRecibeScreening,
-			 P.observacionesResultados, 
+            LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
+			-- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
        M.nombre as tipoMuestra, P.baja,
        Pac.idLocalidad, Pac.idProvincia, Pac.telefonoFijo, Pac.telefonoCelular
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
@@ -77,7 +69,7 @@ INSERT INTO LAB_Temp_ResultadoDetalle
 
 SELECT DISTINCT       P.idProtocolo, P.idEfector, DP.idDetalleProtocolo, I.codigoNomenclador as codigoNomenclador, I.codigo,
 A.ordenImpresion AS ordenArea, I.ordenImpresion AS orden, A.nombre AS area, I.descripcion AS grupo,
-  CASE WHEN I1.idCategoria = 1 THEN I1.descripcion ELSE CASE WHEN I.idcategoria = 1 THEN I1.descripcion ELSE I.descripcion END END AS item, DP.observaciones,
+CASE WHEN I1.idCategoria = 1 THEN I1.descripcion ELSE CASE WHEN I.idcategoria = 1 THEN I1.descripcion ELSE I.descripcion END END AS item, DP.observaciones,
                       CASE WHEN I1.idCategoria = 1 THEN 'Si' ELSE 'No' END AS esTitulo, CASE WHEN I.idEfectorDerivacion <> i.idefector THEN ED.nombre ELSE '' END AS derivado,
                       DP.unidadMedida AS unidad, dbo.ImprimeHiv(P.idProtocolo) AS hiv, DP.metodo, DP.valorReferencia, DP.idDetalleProtocolo AS orden1, DP.trajoMuestra AS muestra,
                       CASE WHEN DP.trajomuestra = 'No' THEN 1 ELSE CASE WHEN I.idEfectorDerivacion <> i.idefector THEN 1 ELSE conResultado END END AS conresultado,
@@ -106,7 +98,7 @@ INSERT INTO LAB_Temp_ResultadoDetalle
 SELECT DISTINCT       DP.idProtocolo, DP.idEfector, DP.idDetalleProtocolo,
 					I.codigoNomenclador as codigoNomenclador, I.codigo, A.ordenImpresion AS ordenArea, I.ordenImpresion AS orden, A.nombre AS area, I.descripcion AS grupo,
                       CASE WHEN I1.idCategoria = 1 THEN I1.descripcion ELSE CASE WHEN I.idcategoria = 1 THEN I1.descripcion ELSE I.descripcion END END AS item, DP.observaciones,
-                       CASE WHEN I1.idCategoria = 1 THEN 'Si' ELSE 'No' END AS esTitulo, CASE WHEN I.idEfectorDerivacion <> i.idefector THEN ED.nombre ELSE '' END AS derivado,
+                      CASE WHEN I1.idCategoria = 1 THEN 'Si' ELSE 'No' END AS esTitulo, CASE WHEN I.idEfectorDerivacion <> i.idefector THEN ED.nombre ELSE '' END AS derivado,
                       DP.unidadMedida AS unidad, dbo.ImprimeHiv(DP.idProtocolo) AS hiv, DP.metodo, DP.valorReferencia, DP.idDetalleProtocolo AS orden1, DP.trajoMuestra AS muestra,
                       CASE WHEN DP.trajomuestra = 'No' THEN 1 ELSE CASE WHEN I.idEfectorDerivacion <> i.idefector THEN 1 ELSE conResultado END END AS conresultado,
                       CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS int) AS varchar(50))
@@ -168,4 +160,3 @@ order by a.numeroaislamiento, a.idGermen
 
 ----------------------------------------------------------------------
 end
-GO

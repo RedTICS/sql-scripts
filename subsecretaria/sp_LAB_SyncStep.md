@@ -32,7 +32,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
   - Paso 1: `exec LAB_SyncStep 1` para marcar el inicio del proceso de sync
   - Paso 2: `exec LAB_ExportaResultadosValidados` para migrar
   - Paso 3: `exec LAB_SyncStep 2` para marcar el fin de la sync y migrar los datos al servidor superior (upstream)
-
+- Ejecutar el script `alter_encabezado.sql` para agregar las columnas idLocalidad, idProvincia, telefonoFijo, telefonoCelular a la tabla temporal de encabezado del efector
 
 ## Instalación de un nuevo efector
 
