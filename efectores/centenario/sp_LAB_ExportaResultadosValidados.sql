@@ -1,19 +1,22 @@
+i
+/*
+Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
+*/
 CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
-/*
-Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
-*/
+
 TRUNCATE TABLE LAB_Temp_ResultadoEncabezado
 TRUNCATE TABLE LAB_Temp_ResultadoDetalle
 
 declare  @dias int
-set @dias=3
+set @dias=10
 
+--exec [LAB_ExportaResultadosValidados]
 create table #TableFinal (idProtocolo int)
 
---select GETDATE()-38
+--select GETDATE()
 
 insert into #TableFinal
 --select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
@@ -22,15 +25,8 @@ SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
 WHERE
 (P.baja = 0) and (P.idTipoServicio<4)
- and ((CONVERT(varchar, fechaValida, 112) >=  CONVERT(varchar,GETDATE()-@dias, 112)
- or  CONVERT(varchar, fechaValidaObservacion, 112) >= CONVERT(varchar,GETDATE()-@dias, 112)))
-
--- and ((CONVERT(varchar, fechaValida, 112) between '20190601' and '20190614' ) or  CONVERT(varchar, fechaValidaObservacion, 112) between '20190601' and '20190614' )
-
---and ((CONVERT(varchar, fechaValida, 112) <> '19000101' ) or  CONVERT(varchar, fechaValidaObservacion, 112) <> '19000101')
---and P.idPaciente = 185070
-
---and ( CONVERT(varchar(6), fechaValida, 112) = '201507' or CONVERT(varchar(6), fechaValidaObservacion, 112) = '201507' )
+and (CONVERT(varchar(8), fechaValida, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112)
+or  CONVERT(varchar(8), fechaValidaObservacion, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112))
 
 
 INSERT INTO LAB_Temp_ResultadoEncabezado
@@ -40,8 +36,8 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              Pac.referencia  AS domicilio, Pac.historiaClinica AS HC, Pri.nombre AS prioridad, O.nombre AS origen, dbo.NumeroProtocolo(P.idProtocolo) AS numero,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama,
 			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante,
-			 M.nombre as tipoMuestra ,null as idSolicitudScreening, null as fechaRecibeScreening,
-			 P.observacionesResultados, P.baja
+			 null as idSolicitudScreening, null as fechaRecibeScreening,
+			 P.observacionesResultados, M.nombre as tipoMuestra, P.baja
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
                       dbo.Sys_Paciente AS Pac ON P.idPaciente = Pac.idPaciente INNER JOIN
                       dbo.LAB_Origen AS O ON P.idOrigen = O.idOrigen INNER JOIN
@@ -58,7 +54,7 @@ AND                       (Pac.idEstado<>2)
 
 
 ---------------------------------------------------------------------------------------
-INSERT INTO laB_Temp_ResultadoDetalle
+INSERT INTO LAB_Temp_ResultadoDetalle
            ([idProtocolo] ,[idEfector] ,[idDetalleProtocolo]
            ,[codigoNomenclador] ,[codigo] ,[ordenArea] ,[orden]
            ,[area] ,[grupo] ,[item] ,[observaciones]
@@ -110,7 +106,7 @@ FROM                 LAB_Temp_ResultadoEncabezado as P inner join
                      LAB_Item AS I ON DP.idItem = I.idItem AND DP.idEfector = I.idEfector INNER JOIN
                      LAB_Item AS I1 ON DP.idSubItem = I1.idItem AND DP.idEfector = I1.idEfector INNER JOIN
                      LAB_Area AS A ON I.idArea = A.idArea INNER JOIN
-                     Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector inner JOIN
+      Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector inner JOIN
                      Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
 WHERE idUsuarioValida=0
 --and DP.idProtocolo IN  (SELECT  idProtocolo   FROM        LAB_Temp_ResultadoEncabezado )
