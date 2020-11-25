@@ -1,3 +1,6 @@
+/*
+ * Stored que se deja para los fines historicos - ya no es utilizado (reemplazado por LAB_SyncNewById )
+ */
 -- =============================================
 -- Author: Julio Rojas
 -- Create date: 15/09/2016

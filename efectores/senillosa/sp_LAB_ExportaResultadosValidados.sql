@@ -1,6 +1,6 @@
 
 /*
- * Version: 1.5 (B - vta_LAB_Antibiograma no tiene el usuario que lo valido)
+ * Version: 1.5 (C - vta_LAB_Antibiograma no tiene el usuario que lo valido y es left join con LAB_Muestra)
  * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
  * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
  * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
@@ -20,8 +20,6 @@ create table #TableFinal (idProtocolo int)
 
 
 insert into #TableFinal
---select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
-
 SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
 WHERE
@@ -50,7 +48,7 @@ FROM         dbo.LAB_Protocolo AS P INNER JOIN
                       dbo.vta_LAB_Embarazadas AS PD ON PD.idProtocolo = P.idProtocolo INNER JOIN
                       dbo.LAB_SectorServicio AS SS ON SS.idSectorServicio = P.idSector INNER JOIN
                       dbo.Sys_Efector AS ES ON ES.idEfector = P.idEfectorSolicitante
-                      INNER JOIN LAB_Muestra as M on M.idMuestra= P.idMuestra
+                      LEFT JOIN LAB_Muestra as M on M.idMuestra= P.idMuestra
 WHERE    P.idProtocolo IN
                           (SELECT  idProtocolo
                             FROM        #TableFinal ) AND (P.baja = 0)
@@ -113,7 +111,7 @@ FROM                 LAB_Temp_ResultadoEncabezado as P inner join
                      LAB_Item AS I1 ON DP.idSubItem = I1.idItem AND DP.idEfector = I1.idEfector INNER JOIN
                      LAB_Area AS A ON I.idArea = A.idArea INNER JOIN
                      Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector
-                     LEFT JOIN Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
+                     INNER JOIN Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
 WHERE idUsuarioValida=0
 --and DP.idProtocolo IN  (SELECT  idProtocolo   FROM        LAB_Temp_ResultadoEncabezado )
 

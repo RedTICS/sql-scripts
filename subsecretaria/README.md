@@ -6,7 +6,7 @@
 |---------|-----------|----------|----|---------------------------------|
 | Centenario | 1 |	SQLCENTENARIO - 10.3.72.18	| SIntegralH | 1.5(A) ✓|
 | Plottier | 2|SQLPLOTTIER - 10.2.8.17 |SIntegralH| 1.5(B) ✓|
-| Senillosa | 3	|SQLSENILLOSA	- 10.4.8.8 |SIntegralH | 1.5(B) ✓ |
+| Senillosa | 3	|SQLSENILLOSA	- 10.4.8.8 |SIntegralH | 1.5(C) ✓ |
 | Rincon | 4|	RINCON - 10.6.8.16	|SIntegralH | 1.5(B) ✓|
 | Chañar | 5|	SQLCHANAR - 10.12.8.9	|SIntegralH| 1.5(B) ✓|
 | Añelo | 6	|10.1.62.53	|SIPSAnelo| 1.5(B) ✓|
@@ -30,6 +30,7 @@
 Versiones:
 - 1.5(A): vta_LAB_Antibiograma NO tiene el usuario que lo valido
 - 1.5(B): vta_LAB_Antibiograma tiene el usuario que lo valido
+- 1.5(C): vta_LAB_Antibiograma tiene el usuario que lo valido y hace left join con tabla LAB_Muestra
 
 ## Sincronización de laboratorio con efectores
 
