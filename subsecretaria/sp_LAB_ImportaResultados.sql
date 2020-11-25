@@ -1,3 +1,6 @@
+/*
+ * Stored que se deja para los fines historicos - ya no es utilizado (reemplazado por LAB_SyncNewById )
+ */
 USE [SIPS]
 GO
 /****** Object:  StoredProcedure [dbo].[LAB_ImportaResultados]    Script Date: 06/11/2020 21:50:58 ******/
