@@ -1,15 +1,11 @@
-USE [SIntegralHLab]
-GO
-/****** Object:  StoredProcedure [dbo].[LAB_ExportaResultadosValidados]    Script Date: 09/11/2020 12:03:17 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 -- =============================================
+-- Version: 1.5 (D - vta_LAB_Antibiograma no tiene el usuario que lo valido)
 -- Author:		Carolina Pintos
 -- Description:	Pone en las tablas temporales los resultados validados a exportar al servidor de la SSS
 -- Update: 2016-09-27 - Julio: Agrego columna de baja en los encabezados y modifico select de protocolos
 -- Update: 2018-12-10 - Julio: Se hizo un hotfix para que no reasigne pacientes si el tipo_servicio <> 4, se agrego ese filtro en el union all de "Reasignacion de pacientes"
+-- Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
+-- Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
 -- =============================================
 CREATE PROCEDURE [dbo].[LAB_ExportaResultadosValidados]
 AS
@@ -19,10 +15,10 @@ TRUNCATE TABLE LAB_Temp_ResultadoEncabezado
 TRUNCATE TABLE LAB_Temp_ResultadoDetalle
 
 DECLARE  @dias INT
-set @dias=30 --CAMBIAR ACA LOS DIAS A RESTAR DESDE EL DIA DE HOY
+select top 1 @dias=diasASincronizar from LAB_SyncConfig
 
 
-CREATE TABLE #TableFinal (idProtocolo int)
+CREATE TABLE TableFinal (idProtocolo int)
 
 INSERT INTO #TableFinal
 SELECT DISTINCT idProtocolo FROM (
@@ -32,14 +28,6 @@ WHERE
 (P.baja = 0) and (P.idTipoServicio<4)
 and (CONVERT(varchar(8), fechaValida, 112) >=  CONVERT(varchar(8),GETDATE()-@dias, 112)
 or  CONVERT(varchar(8), fechaValidaObservacion, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112))
-
---and ((CONVERT(varchar, fechaValida, 112) between '20160407' and '20160415' ) or  CONVERT(varchar, fechaValidaObservacion, 112) between '20160407' and '20160415' )
-
---and ((CONVERT(varchar, fechaValida, 112) <> '19000101' ) or  CONVERT(varchar, fechaValidaObservacion, 112) <> '19000101')
---and P.idPaciente = 1840234
-
---and ( CONVERT(varchar(6), fechaValida, 112) = '201507' or CONVERT(varchar(6), fechaValidaObservacion, 112) = '201507' )
-
 UNION ALL
 -- Eliminacion de protocolos
 select distinct  A.idProtocolo from LAB_AuditoriaProtocolo A
@@ -77,10 +65,10 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              Pac.fechaNacimiento, 103) AS fechaNacimiento, P.sexo, Pac.numeroDocumento, CONVERT(varchar(10), P.fecha, 103) AS fecha, P.fecha AS fecha1,
              Pac.referencia  AS domicilio, Pac.historiaClinica AS HC, Pri.nombre AS prioridad, O.nombre AS origen, dbo.NumeroProtocolo(P.idProtocolo) AS numero,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama,
-			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante, 
-       null as idSolicitudScreening, null as fechaRecibeScreening,
-      LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
-			-- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
+			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante,
+            null as idSolicitudScreening, null as fechaRecibeScreening,
+       LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
+			 -- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
        M.nombre as tipoMuestra, P.baja,
        Pac.idLocalidad, Pac.idProvincia, Pac.telefonoFijo, Pac.telefonoCelular
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
@@ -95,7 +83,7 @@ FROM         dbo.LAB_Protocolo AS P INNER JOIN
 WHERE    P.idProtocolo IN
                           (SELECT  idProtocolo
                             FROM        #TableFinal ) --AND (P.baja = 0) interesa actualizar los que estan dados de baja
-AND                       (Pac.idEstado <>2)
+AND                       (Pac.idEstado<>2)
 
 
 ---------------------------------------------------------------------------------------
@@ -113,10 +101,12 @@ A.ordenImpresion AS ordenArea, I.ordenImpresion AS orden, A.nombre AS area, I.de
                       CASE WHEN I1.idCategoria = 1 THEN 'Si' ELSE 'No' END AS esTitulo, CASE WHEN I.idEfectorDerivacion <> i.idefector THEN ED.nombre ELSE '' END AS derivado,
                       DP.unidadMedida AS unidad, dbo.ImprimeHiv(P.idProtocolo) AS hiv, DP.metodo, DP.valorReferencia, DP.idDetalleProtocolo AS orden1, DP.trajoMuestra AS muestra,
                       CASE WHEN DP.trajomuestra = 'No' THEN 1 ELSE CASE WHEN I.idEfectorDerivacion <> i.idefector THEN 1 ELSE conResultado END END AS conresultado,
-                      CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS int) AS varchar(50))
+                      CASE WHEN I.idEfectorDerivacion <> i.idefector then 'Derivado ' + ED.nombre else  CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS  decimal(18, 0)) AS varchar(50))
+                      --CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS int) AS varchar(50))
                       WHEN 1 THEN CAST(CAST(resultadonum AS decimal(18, 1)) AS varchar(50)) WHEN 2 THEN CAST(CAST(resultadonum AS decimal(18, 2)) AS varchar(50))
                       WHEN 3 THEN CAST(CAST(resultadonum AS decimal(18, 3)) AS varchar(50)) WHEN 4 THEN CAST(CAST(resultadonum AS decimal(18, 4)) AS varchar(50))
-                      END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
+                      END END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
+                      --END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
 FROM         LAB_Temp_ResultadoEncabezado AS P INNER JOIN
                       LAB_DetalleProtocolo AS DP ON DP.idProtocolo = P.idProtocolo INNER JOIN
                       LAB_Item AS I ON DP.idItem = I.idItem AND DP.idEfector = I.idEfector INNER JOIN
@@ -150,8 +140,8 @@ FROM                 LAB_Temp_ResultadoEncabezado as P inner join
                      LAB_Item AS I ON DP.idItem = I.idItem AND DP.idEfector = I.idEfector INNER JOIN
                      LAB_Item AS I1 ON DP.idSubItem = I1.idItem AND DP.idEfector = I1.idEfector INNER JOIN
                      LAB_Area AS A ON I.idArea = A.idArea INNER JOIN
-                     Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector inner JOIN
-                     Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
+                     Sys_Efector AS ED ON I.idEfectorDerivacion = ED.idEfector
+                     INNER JOIN Sys_Usuario AS U1 ON DP.idUsuarioValidaObservacion = U1.idUsuario
 WHERE idUsuarioValida=0
 --and DP.idProtocolo IN  (SELECT  idProtocolo   FROM        LAB_Temp_ResultadoEncabezado )
 
@@ -201,3 +191,6 @@ order by a.numeroaislamiento, a.idGermen
 
 ----------------------------------------------------------------------
 end
+
+
+#
