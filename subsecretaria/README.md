@@ -31,7 +31,7 @@ Versiones:
 - 1.5(A): vta_LAB_Antibiograma NO tiene el usuario que lo valido
 - 1.5(B): vta_LAB_Antibiograma tiene el usuario que lo valido
 - 1.5(C): vta_LAB_Antibiograma tiene el usuario que lo valido y hace left join con tabla LAB_Muestra
-- 1.5(D): script del castro que contiene diferentes validaciones (tiene el usuario que lo valido)
+- 1.5(D): script del castro que contiene diferentes validaciones (tiene el usuario que lo valido), no tiene telefono de contacto la tabla de paciente
 
 ## Sincronización de laboratorio con efectores
 
