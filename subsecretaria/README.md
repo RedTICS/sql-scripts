@@ -23,15 +23,18 @@
 | Piedra | 185	| SQLPIEDRA	- 10.19.8.8 |SIntegralH | 1.5(A) ✓|
 | Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH ||
 | Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5(B) ✓|
-| Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab ||
+| Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D)|
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
 | Heller | 221	|SQLHELLER - No tiene sistema de lab |SIntegralH ||
+| Laboratorio Central | 228	| 10.1.62.53 |LaboratorioCentral | 1.5(E)|
 
 Versiones:
 - 1.5(A): vta_LAB_Antibiograma NO tiene el usuario que lo valido
 - 1.5(B): vta_LAB_Antibiograma tiene el usuario que lo valido
 - 1.5(C): vta_LAB_Antibiograma tiene el usuario que lo valido y hace left join con tabla LAB_Muestra
 - 1.5(D): script del castro que contiene diferentes validaciones (tiene el usuario que lo valido), no tiene telefono de contacto la tabla de paciente
+- 1.5(E): script del laboratorio central que contiene diferencias con los otros scripts en la validacion de los estudios
+
 
 ## Sincronización de laboratorio con efectores
 

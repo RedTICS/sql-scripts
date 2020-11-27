@@ -62,7 +62,7 @@ begin
 	DECLARE @linkedQueryStart VARCHAR(200);
 	DECLARE @linkedQueryEnd VARCHAR(200);
 	DECLARE @linkedExec NVARCHAR(200);
-	DECLARE @sql NVARCHAR(400);
+	DECLARE @sql NVARCHAR(800);
 	DECLARE @upstreamFullPath NVARCHAR(100);
 
 	-- Obtengo el servidor upstream (superior - central) y el efector que soy
@@ -154,7 +154,7 @@ begin
 		fechaRecibeScreening,
 		observacionesResultados ,
 		tipoMuestra ,
-		baja ,
+		0 as baja ,
 		idLocalidad ,
 		idProvincia ,
 		telefonoFijo,
