@@ -5,20 +5,19 @@
 
 
 /****** Object:  StoredProcedure [dbo].[LAB_Sync]    Script Date: 29/10/2020 02:41:19 ******/
-SET QUOTED_IDENTIFIER ON
-GO
+
 CREATE PROCEDURE [dbo].[LAB_SyncNew]
 WITH EXECUTE AS CALLER
 AS
 BEGIN
 
 				-- SET NOCOUNT ON;
-
+        DECLARE @idEfector INT,  @tablaEncabezado VARCHAR(100), @tablaDetalle VARCHAR(100);
         PRINT 'INICIO DEL PROCESO';
         PRINT GETDATE();
         DBCC TRACEON (610) WITH NO_INFOMSGS;
 
-        DECLARE @TSQL NVARCHAR(500);
+        DECLARE @TSQL NVARCHAR(2000);
 
 				-- PROTOCOLOS
         CREATE TABLE #LAB_ResultadoEncabezado
@@ -50,11 +49,11 @@ BEGIN
               [fechaRecibeScreening] [DATETIME] NULL ,
               [observacionesResultados] [NVARCHAR](4000) NULL ,
               [tipoMuestra] [NVARCHAR](500) NULL,
-    			    [baja] [bit] NOT NULL default(0),
-              [ idLocalidad ] int,
-              [ idProvincia ] int,
-              [ telefonoFijo ] nvarchar(20),
-              [ telefonoCelular ] nvarchar(20)
+              [baja] [bit] NOT NULL default(0),
+              [idLocalidad] int,
+              [idProvincia] int,
+              [telefonoFijo] nvarchar(20),
+              [telefonoCelular] nvarchar(20)
             );
 				-- DETALLLES
         CREATE TABLE #LAB_ResultadoDetalle
@@ -94,6 +93,11 @@ BEGIN
 				--		- Si tienen ultimoSyncFechaFin, que el mismo sea + minutosMinimoSyncPrincipal < GETDATE() [Que hayan pasado al menos minutosMinimoSyncPrincipal del ultimo update]
 				-- 		- La fecha de ultimoSyncFechaFin < ultimoUpdateEfectorFin [hubo al menos un update desde el efector desde el ultimo update aca]
 
+           		BEGIN TRY
+           		DROP TABLE #EFECTORES_SYNC
+           		END TRY
+           		BEGIN CATCH
+           		END CATCH
 				SELECT *
 						INTO #EFECTORES_SYNC
 						FROM LAB_EstadoSyncGeneral
@@ -102,11 +106,9 @@ BEGIN
 						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND DATEADD(MINUTE, minutosMinimoSyncPrincipal, ultimoSyncFechaFin) < GETDATE() ) )
 						AND ( ultimoSyncFechaFin is null OR (ultimoSyncFechaFin is not null AND ultimoSyncFechaFin < ultimoUpdateEfectorFin ) )
 
-
         WHILE EXISTS ( SELECT   1
                        FROM     #EFECTORES_SYNC )
             BEGIN
-                DECLARE @idEfector INT,  @tablaEncabezado VARCHAR(100), @tablaDetalle VARCHAR(100);
 
                 SELECT TOP 1
 										@idEfector = #EFECTORES_SYNC.idEfector,
@@ -114,36 +116,74 @@ BEGIN
 										@tablaDetalle = #EFECTORES_SYNC.tablaDetalle
                 FROM  #EFECTORES_SYNC;
 
-								BEGIN TRY
-                  -- Marco que comenzo migracion de este efector
-                  SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaInicio=GETDATE(), ultimoSyncFechaFin=NULL where idEfector=' + CAST(@idEfector as VARCHAR(10))
-                  EXEC ( @TSQL )
-									-- traigo protocolos
-									SET @TSQL = 'INSERT INTO #LAB_ResultadoEncabezado SELECT * FROM '+ @tablaEncabezado;
-									EXEC ( @TSQL );
+				BEGIN TRY
+                  	-- Marco que comenzo migracion de este efector
+                  	SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaInicio=GETDATE(), ultimoSyncFechaFin=NULL where idEfector=' + CAST(@idEfector as VARCHAR(10))
+                  	EXEC ( @TSQL )
+				  	-- traigo protocolos
+					SET @TSQL = 'INSERT INTO #LAB_ResultadoEncabezado
+								 SELECT [idProtocolo]
+			                      ,[idEfector]
+			                      ,[apellido]
+			                      ,[nombre]
+			                      ,[edad]
+			                      ,[unidadEdad]
+			                      ,[fechaNacimiento]
+			                      ,[sexo]
+			                      ,[numeroDocumento]
+			                      ,[fecha]
+			                      ,[fecha1]
+			                      ,[domicilio]
+			                      ,[HC]
+			                      ,[prioridad]
+			                      ,[origen]
+			                      ,[numero]
+			                      ,[hiv]
+			                      ,[solicitante]
+			                      ,[sector]
+			                      ,[sala]
+			                      ,[cama]
+			                      ,[embarazo]
+			                      ,[EfectorSolicitante]
+			                      ,[idSolicitudScreening]
+			                      ,[fechaRecibeScreening]
+			                      ,[observacionesResultados]
+			                      ,[tipoMuestra]
+			                      ,[baja]
+			                      ,[idLocalidad]
+			                      ,[idProvincia]
+			                      ,[telefonoFijo]
+			                      ,[telefonoCelular]
+									FROM '+ @tablaEncabezado;
+					EXEC ( @TSQL );
 
-									-- traigo detalles
-									SET @TSQL = 'INSERT INTO #LAB_ResultadoDetalle SELECT * FROM '+ @tablaDetalle;
-									EXEC ( @TSQL );
-								END TRY
-								BEGIN CATCH
-							  SELECT
-								ERROR_NUMBER() AS ErrorNumber
-								,ERROR_MESSAGE() AS ErrorMessage;
-                    END CATCH;
+					-- traigo detalles
+					SET @TSQL = 'INSERT INTO #LAB_ResultadoDetalle SELECT * FROM '+ @tablaDetalle;
+					EXEC ( @TSQL );
+
+                	-- Marco que finalizo la migracion de este efector
+                	SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaFin=GETDATE() where idEfector=' + CAST(@idEfector as VARCHAR(10))
+                	EXEC ( @TSQL )
+				END TRY
+				BEGIN CATCH
+				  PRINT 'Error en la migracion del efector ';
+                  SELECT
+                    ERROR_NUMBER() AS ErrorNumber
+                    ,ERROR_MESSAGE() AS ErrorMessage;
+                END CATCH;
 								--if @retval <> 0
 								--raiserror(@srvr , 16, 2 );
                 DELETE  FROM #EFECTORES_SYNC
-                WHERE   idEfector = @idEfector;
-            END;
+                WHERE    idEfector = @idEfector;
 
-        PRINT GETDATE();
+        END; -- WHILE
+
         PRINT 'TRUNCANDO TABLAS TEMPORALES';
         TRUNCATE TABLE LAB_Temp_ResultadoDetalle;
         TRUNCATE TABLE LAB_Temp_ResultadoEncabezado;
 
-        PRINT GETDATE();
         PRINT 'INSERTANDO EN TABLAS TEMPORALES';
+
         INSERT  INTO LAB_Temp_ResultadoEncabezado
                 SELECT [idProtocolo]
                       ,[idEfector]
@@ -178,9 +218,10 @@ BEGIN
                       ,[telefonoFijo]
                       ,[telefonoCelular]
                 FROM    #LAB_ResultadoEncabezado;
+
         INSERT  INTO LAB_Temp_ResultadoDetalle
                 SELECT  *
-                FROM    #LAB_ResultadoDetalle;
+             FROM    #LAB_ResultadoDetalle;
 
         DROP TABLE #EFECTORES_SYNC;
         DROP TABLE #LAB_ResultadoEncabezado;
@@ -206,9 +247,6 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET
                     Target.FechaActualizacion = Source.FechaActualizacion;
-        -- Marco que finalizo la migracion de este efector
-        SET @TSQL = 'UPDATE LAB_EstadoSyncGeneral set ultimoSyncFechaFin=GETDATE() where idEfector=' + CAST(@idEfector as VARCHAR(10))
-        EXEC ( @TSQL )
 
 		DBCC TRACEOFF (610) WITH NO_INFOMSGS;
 

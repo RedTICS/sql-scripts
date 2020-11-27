@@ -15,6 +15,7 @@ Los pasos se ejecutan en un proceso cron, cada X tiempo. El código se compone d
 - Recrear la tabla de encabezado y sube los nuevos datos
 - Recrear la tabla de detalle y sube los nuevos datos
 - Asignar la fecha/hora de finalización del update en el campo ultimo_update_efector_fin en la tabla <upstream>.EstadoSyncGeneral
+- La modificación del campo ultimo_update_efector_fin ejecuta un trigger que migra los datos desde las tablas temporales a las tablas principales (por medio del stored LAB_SyncNewById <id del efector>)
 
 ## Pasos en el central
 
@@ -32,7 +33,7 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
   - Paso 1: `exec LAB_SyncStep 1` para marcar el inicio del proceso de sync
   - Paso 2: `exec LAB_ExportaResultadosValidados` para migrar
   - Paso 3: `exec LAB_SyncStep 2` para marcar el fin de la sync y migrar los datos al servidor superior (upstream)
-
+- Ejecutar el script `alter_encabezado.sql` para agregar las columnas idLocalidad, idProvincia, telefonoFijo, telefonoCelular a la tabla temporal de encabezado del efector
 
 ## Instalación de un nuevo efector
 
@@ -41,8 +42,8 @@ También existe un proceso cron que verifica el estado de la tabla EstadoSyncGen
 - Crear una tabla con el nombre del efector similar a ``Lab_Temp_<Efector>ResultadoDetalle`` tomando como base `table_detalle.sql` [central]
 - Agregar permisos de select, insert, update, delete al usuario `linked_desde_efector` para las dos tablas creadas (encabezado y detalle) [central]
 - Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización. [central]
-- Crear una tabla en el efector usando como base `efectores/unificados/LAB_SyncStatus.sql` [efector]
-- Crear una tabla en el efector usando como base `efectores/unificados/LAB_SyncConfig.sql`[efector]
+- Crear una tabla en el efector usando como base `efectores/unificados/table_LAB_SyncStatus.sql` [efector]
+- Crear una tabla en el efector usando como base `efectores/unificados/table_LAB_SyncConfig.sql`[efector]
 - Crear un linked server con el servidor de la subsecretaria (10.1.62.53) [efector]
 - Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde, el linked server, base de datos (generalmente SIPS.dbo), y la cantidad de dias a sincronizar hacia atrás. [efector]
 - Verificar que la tabla `LAB_EncabezadoDetalle` contenga los campos `idLocalidad`, `idProvincia`, `telefonoFijo`, `telefonoCelular` [efector]`
