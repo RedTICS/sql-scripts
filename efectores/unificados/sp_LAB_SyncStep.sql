@@ -33,12 +33,13 @@ begin
 	set @cantidadRegistrosEncabezado = (select count(*) from LAB_Temp_ResultadoEncabezado)
 	set @cantidadRegistrosDetalle = (select count(*) from LAB_Temp_ResultadoDetalle)
 
-	UPDATE dbo.LAB_SyncStatus set fechaFin=GETDATE(), cantidadRegistrosEncabezado=@cantidadRegistrosEncabezado, cantidadRegistrosDetalle=@cantidadRegistrosDetalle where  id = (select top 1 id from dbo.LAB_SyncStatus where fechaFin is null order by id desc);
+	UPDATE dbo.LAB_SyncStatus set fechaFin=GETDATE(), cantidadRegistrosEncabezado=@cantidadRegistrosEncabezado, cantidadRegistrosDetalle=@cantidadRegistrosDetalle where  id = (select top 1 id from dbo.LAB_SyncStatus where fechaFin is null or fechaFinUpload is null order by id desc);
 	SELECT @error = @@ERROR, @rowcount = @@ROWCOUNT;
 
 	if (@rowcount=0)
 	begin
 		print 'No hay sync iniciada para actualizar';
+
 		RETURN;
 	end
 
@@ -62,7 +63,7 @@ begin
 	DECLARE @linkedQueryStart VARCHAR(200);
 	DECLARE @linkedQueryEnd VARCHAR(200);
 	DECLARE @linkedExec NVARCHAR(200);
-	DECLARE @sql NVARCHAR(400);
+	DECLARE @sql NVARCHAR(800);
 	DECLARE @upstreamFullPath NVARCHAR(100);
 
 	-- Obtengo el servidor upstream (superior - central) y el efector que soy

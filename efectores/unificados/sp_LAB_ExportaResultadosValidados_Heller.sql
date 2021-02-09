@@ -1,7 +1,6 @@
 
 /*
- * Version: 1.5 (B - vta_LAB_Antibiograma no tiene el usuario que lo valido)
- * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
+ * Version: 1.5 (Heller)
  * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
  * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
  */
@@ -22,12 +21,9 @@ create table #TableFinal (idProtocolo int)
 insert into #TableFinal
 --select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
 
-SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
-inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
+SELECT DISTINCT idProtocolo FROM dbo.SSS_Lab_Encab_Prot as  DP
 WHERE
-(P.baja = 0) and (P.idTipoServicio<4)
-and (CONVERT(varchar(8), fechaValida, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112)
-or  CONVERT(varchar(8), fechaValidaObservacion, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112))
+CONVERT(varchar(8), fecha, 112) >= CONVERT(varchar(8),GETDATE()-@dias, 112))
 
 
 INSERT INTO LAB_Temp_ResultadoEncabezado
@@ -37,7 +33,7 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
              Pac.referencia  AS domicilio, Pac.historiaClinica AS HC, Pri.nombre AS prioridad, O.nombre AS origen, dbo.NumeroProtocolo(P.idProtocolo) AS numero,
              dbo.ImprimeHiv(P.idProtocolo) AS hiv, UPPER(Prof.solicitante) AS solicitante, SS.nombre AS sector, P.sala, P.cama,
 			 CASE WHEN PD.iddiagnostico IS NULL THEN '' ELSE 'E' END AS embarazo, ES.nombre AS EfectorSolicitante,
-			 null as idSolicitudScreening, null as fechaRecibeScreening,
+       null as idSolicitudScreening, null as fechaRecibeScreening,
 			 LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
        -- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
        M.nombre as tipoMuestra, P.baja,
@@ -69,14 +65,16 @@ INSERT INTO LAB_Temp_ResultadoDetalle
 
 SELECT DISTINCT       P.idProtocolo, P.idEfector, DP.idDetalleProtocolo, I.codigoNomenclador as codigoNomenclador, I.codigo,
 A.ordenImpresion AS ordenArea, I.ordenImpresion AS orden, A.nombre AS area, I.descripcion AS grupo,
-                      CASE WHEN I1.idCategoria = 1 THEN I1.descripcion ELSE CASE WHEN I.idcategoria = 1 THEN I1.descripcion ELSE I.descripcion END END AS item, DP.observaciones,
+                   CASE WHEN I1.idCategoria = 1 THEN I1.descripcion ELSE CASE WHEN I.idcategoria = 1 THEN I1.descripcion ELSE I.descripcion END END AS item, DP.observaciones,
                       CASE WHEN I1.idCategoria = 1 THEN 'Si' ELSE 'No' END AS esTitulo, CASE WHEN I.idEfectorDerivacion <> i.idefector THEN ED.nombre ELSE '' END AS derivado,
                       DP.unidadMedida AS unidad, dbo.ImprimeHiv(P.idProtocolo) AS hiv, DP.metodo, DP.valorReferencia, DP.idDetalleProtocolo AS orden1, DP.trajoMuestra AS muestra,
                       CASE WHEN DP.trajomuestra = 'No' THEN 1 ELSE CASE WHEN I.idEfectorDerivacion <> i.idefector THEN 1 ELSE conResultado END END AS conresultado,
                       CASE WHEN I.idEfectorDerivacion <> i.idefector then 'Derivado ' + ED.nombre else  CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS  decimal(18, 0)) AS varchar(50))
+                      --CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS int) AS varchar(50))
                       WHEN 1 THEN CAST(CAST(resultadonum AS decimal(18, 1)) AS varchar(50)) WHEN 2 THEN CAST(CAST(resultadonum AS decimal(18, 2)) AS varchar(50))
                       WHEN 3 THEN CAST(CAST(resultadonum AS decimal(18, 3)) AS varchar(50)) WHEN 4 THEN CAST(CAST(resultadonum AS decimal(18, 4)) AS varchar(50))
                       END END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
+                      --END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
 FROM         LAB_Temp_ResultadoEncabezado AS P INNER JOIN
                       LAB_DetalleProtocolo AS DP ON DP.idProtocolo = P.idProtocolo INNER JOIN
                       LAB_Item AS I ON DP.idItem = I.idItem AND DP.idEfector = I.idEfector INNER JOIN
