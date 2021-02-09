@@ -16,7 +16,7 @@
 | Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |
 | Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | |
 | Buta | 53	|HTALBUTA	- 10.25.72.110 |SIntegralH | |
-| Andacollo | 55|	SRVANDACOLLO	- 10.13.72.8 |SIntegralH ||
+| Andacollo | 55|	SRVANDACOLLO	- 10.13.72.8 |SIntegralH |1.5(B) ✓|
 | San Martín | 70	|SANMARTIN - 10.10.8.21	| SIntegralH | 1.5(A) ✓|
 | Junin | 71|	SQLJUNIN - 10.9.72.25 |SIntegralH | 1.5(A) ✓|
 | Villa | 73|	VILLA	- 10.20.8.19 |SIntegralH | 1.5(A) ✓|
@@ -25,7 +25,7 @@
 | Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5(B) ✓|
 | Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D)|
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
-| Heller | 221	|SQLHELLER - No tiene sistema de lab |SIntegralH ||
+| Heller | 221	|SQLHELLER - 10.1.104.37 - No tiene sistema de lab |SIntegralH ||
 | Laboratorio Central | 228	| 10.1.62.53 |LaboratorioCentral | 1.5(E)|
 
 Versiones:
