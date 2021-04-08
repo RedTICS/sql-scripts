@@ -19,9 +19,11 @@ Los pasos se ejecutan en un proceso cron, cada X tiempo. El código se compone d
 
 ## Pasos en el central
 
-También existe un proceso cron que verifica el estado de la tabla EstadoSyncGeneral
+Existe un JOB `LAB_SyncNew-SIPS` el cual se ejecuta cada 15 minutos que llama al Stored Procedure `LAB_UpdateMigracionesPendientes` dicho stored verifica en la tabla `LAB_EstadoSyncGeneral` aquellos efectores que hayan subido nuevos laboratorios pero que aun no hayan sido inyectados a SIPS central (los efectores suben los estudios a una tabla temporal, teniendo cada efector su propia tabla). 
 
-- Tomar un registro de la tabla EstadoSyncGeneral cuya fecha de ultimo_sync_fecha_fin sea mayor a X tiempo y ultimo_update_efector_fin no sea null (para saber que no se esta haciendo un update desde el downstream server)
+Por cada uno de los efectores que esta pendiente su inyección dentro de SIPS, se llama al Stored `LAB_SyncNewById` indicando el id del efector que se debe migrar. Este Stored realiza los siguientes pasos
+
+
 - Marcar el campo EstadoSyncGeneral.ultimo_sync_fecha_inicio con al fecha actual y EstadoSyncGeneral.ultimo_sync_fecha_fin en null (para indicar que esta en proceso)
 - Migrar los datos desde las tablas indicadas en EstadoSyncGeneral.tabla_encabezado y EstadoSyncGeneral.tabla_detalle
 - Actualizar los campos EstadoSyncGeneral.ultimo_sync_fecha_fin con la fecha actual, EstadoSyncGeneral.ultimo_sync_registros con la cantidad de registros migrados (encabezados? o encabezados + detalle)
