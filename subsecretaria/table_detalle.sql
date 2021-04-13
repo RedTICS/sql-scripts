@@ -1,5 +1,5 @@
 
-CREATE TABLE [dbo].[LAB_Temp_ResultadoDetalle](
+CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoDetalle](
 	[idProtocolo] [int] NOT NULL,
 	[idEfector] [int] NOT NULL,
 	[idDetalleProtocolo] [int] NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[LAB_Temp_ResultadoDetalle](
 	[resultado] [nvarchar](4000) NULL,
 	[codigo2] [nvarchar](50) NOT NULL,
 	[profesional_val] [nvarchar](500) NOT NULL,
- CONSTRAINT [PK_LAB_Tmp_ResultadoDetalle_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_LAB_Tmp_<Efector>ResultadoDetalle_1] PRIMARY KEY CLUSTERED 
 (
 	[idProtocolo] ASC,
 	[idEfector] ASC,
