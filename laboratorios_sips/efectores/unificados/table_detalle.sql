@@ -1,5 +1,5 @@
 
-CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoDetalle](
+CREATE TABLE [dbo].[LAB_Temp_<eResultadoDetalle](
 	[idProtocolo] [int] NOT NULL,
 	[idEfector] [int] NOT NULL,
 	[idDetalleProtocolo] [int] NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoDetalle](
 	[resultado] [nvarchar](4000) NULL,
 	[codigo2] [nvarchar](50) NOT NULL,
 	[profesional_val] [nvarchar](500) NOT NULL,
- CONSTRAINT [PK_LAB_Tmp_<Efector>ResultadoDetalle_1] PRIMARY KEY CLUSTERED
+ CONSTRAINT [PK_LAB_Tmp_<eResultadoDetalle_1] PRIMARY KEY CLUSTERED
 (
 	[idProtocolo] ASC,
 	[idEfector] ASC,
@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoDetalle](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-GRANT DELETE ON [dbo].[LAB_Temp_<Efector>ResultadoDetalle] TO [linked_desde_efector]
-GRANT INSERT ON [dbo].[LAB_Temp_<Efector>ResultadoDetalle] TO [linked_desde_efector]
-GRANT SELECT ON [dbo].[LAB_Temp_<Efector>ResultadoDetalle] TO [linked_desde_efector]
-GRANT UPDATE ON [dbo].[LAB_Temp_<Efector>ResultadoDetalle] TO [linked_desde_efector]
+GRANT DELETE ON [dbo].[LAB_Temp_<eResultadoDetalle] TO [linked_desde_efector]
+GRANT INSERT ON [dbo].[LAB_Temp_<eResultadoDetalle] TO [linked_desde_efector]
+GRANT SELECT ON [dbo].[LAB_Temp_<eResultadoDetalle] TO [linked_desde_efector]
+GRANT UPDATE ON [dbo].[LAB_Temp_<efector>ResultadoDetalle] TO [linked_desde_efector]

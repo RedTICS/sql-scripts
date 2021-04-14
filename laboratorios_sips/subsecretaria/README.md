@@ -14,14 +14,14 @@
 | Zapala | 33	|SRVZAPALA	- 10.8.8.15 |SIntegralH| 1.5(A) ✓|
 | Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | |
 | Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |
-| Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | |
-| Buta | 53	|HTALBUTA	- 10.25.72.110 |SIntegralH | |
+| Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | 1.5(B) ✓|
+| Buta | 53	|HTALBUTA	- 10.25.72.110 |SIntegralH | 1.5(G) ✓|
 | Andacollo | 55|	SRVANDACOLLO	- 10.13.72.8 |SIntegralH |1.5(B) ✓|
 | San Martín | 70	|SANMARTIN - 10.10.8.21	| SIntegralH | 1.5(A) ✓|
 | Junin | 71|	SQLJUNIN - 10.9.72.25 |SIntegralH | 1.5(A) ✓|
 | Villa | 73|	VILLA	- 10.20.8.19 |SIntegralH | 1.5(A) ✓|
 | Piedra | 185	| SQLPIEDRA	- 10.19.8.8 |SIntegralH | 1.5(A) ✓|
-| Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH ||
+| Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH | 1.5(F) ✓|
 | Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5(B) ✓|
 | Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D)|
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
@@ -34,6 +34,8 @@ Versiones:
 - 1.5(C): vta_LAB_Antibiograma tiene el usuario que lo valido y hace left join con tabla LAB_Muestra
 - 1.5(D): script del castro que contiene diferentes validaciones (tiene el usuario que lo valido), no tiene telefono de contacto la tabla de paciente
 - 1.5(E): script del laboratorio central que contiene diferencias con los otros scripts en la validacion de los estudios
+- 1.5(F): script de Picun que contiene varias diferencias y mucha menos funcionalidad
+- 1.5(G): vta_LAB_Antibiograma NO tiene el usuario que lo valido pero no tiene telefono fijo o celular (es similara al 1.5(A))
 
 
 ## Sincronización de laboratorio con efectores

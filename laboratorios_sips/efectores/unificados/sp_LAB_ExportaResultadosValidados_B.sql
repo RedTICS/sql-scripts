@@ -74,11 +74,9 @@ A.ordenImpresion AS ordenArea, I.ordenImpresion AS orden, A.nombre AS area, I.de
                       DP.unidadMedida AS unidad, dbo.ImprimeHiv(P.idProtocolo) AS hiv, DP.metodo, DP.valorReferencia, DP.idDetalleProtocolo AS orden1, DP.trajoMuestra AS muestra,
                       CASE WHEN DP.trajomuestra = 'No' THEN 1 ELSE CASE WHEN I.idEfectorDerivacion <> i.idefector THEN 1 ELSE conResultado END END AS conresultado,
                       CASE WHEN I.idEfectorDerivacion <> i.idefector then 'Derivado ' + ED.nombre else  CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS  decimal(18, 0)) AS varchar(50))
-                      --CASE WHEN I1.idTipoResultado <> 1 THEN DP.resultadoCar ELSE CASE I1.formatoDecimal WHEN 0 THEN CAST(CAST(resultadonum AS int) AS varchar(50))
                       WHEN 1 THEN CAST(CAST(resultadonum AS decimal(18, 1)) AS varchar(50)) WHEN 2 THEN CAST(CAST(resultadonum AS decimal(18, 2)) AS varchar(50))
                       WHEN 3 THEN CAST(CAST(resultadonum AS decimal(18, 3)) AS varchar(50)) WHEN 4 THEN CAST(CAST(resultadonum AS decimal(18, 4)) AS varchar(50))
                       END END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
-                      --END END AS resultado, I1.codigo AS codigo2,  U.firmaValidacion as profesional_val
 FROM         LAB_Temp_ResultadoEncabezado AS P INNER JOIN
                       LAB_DetalleProtocolo AS DP ON DP.idProtocolo = P.idProtocolo INNER JOIN
                       LAB_Item AS I ON DP.idItem = I.idItem AND DP.idEfector = I.idEfector INNER JOIN
@@ -132,7 +130,6 @@ select  A.idProtocolo, P.idEfector as idEfector, A.idProtocoloGermen  *(-1) as i
 Ar.nombre as area, I.nombre  AS grupo, 'Aislamiento'  AS item, '' as observaciones, 'No' AS esTitulo,  ''  AS derivado,
 '' AS unidad, 0 AS hiv, '' as metodo, '' as valorReferencia, 9999 AS orden1, 'Si' AS muestra,
 1 AS conresultado, G.nombre   AS resultado,  '' AS codigo2, '' as profesional_val
-
 from lab_protocologermen as A
 inner join LAB_Temp_ResultadoEncabezado as P on P.idProtocolo= A.idProtocolo
 inner join lab_item as I on I.idItem= a.idItem

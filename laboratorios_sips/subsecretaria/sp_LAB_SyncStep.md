@@ -48,4 +48,4 @@ Por cada uno de los efectores que esta pendiente su inyección dentro de SIPS, s
 - Crear una tabla en el efector usando como base `efectores/unificados/table_LAB_SyncConfig.sql`[efector]
 - Crear un linked server con el servidor de la subsecretaria (servidorUpstream: `10.1.62.53` dbUpstream: `SIPS.dbo`) [efector]
 - Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde, el linked server, base de datos (generalmente SIPS.dbo), y la cantidad de dias a sincronizar hacia atrás. [efector]
-- Verificar que la tabla `LAB_EncabezadoDetalle` contenga los campos `idLocalidad`, `idProvincia`, `telefonoFijo`, `telefonoCelular` [efector]`
+- Verificar que la tabla `LAB_Temp_ResultadoEncabezado` contenga los campos `idLocalidad`, `idProvincia`, `telefonoFijo`, `telefonoCelular` (ver script `alter_encabezado.sql`)[efector]`

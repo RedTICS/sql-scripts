@@ -1,5 +1,5 @@
 /****** Object:  Table [dbo].[LAB_Temp_ResultadoEncabezado]    Script Date: 05/11/2020 12:15:31 ******/
-CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoEncabezado](
+CREATE TABLE [dbo].[LAB_Temp_<efector>ResultadoEncabezado](
 	[idProtocolo] [int] NOT NULL,
 	[idEfector] [int] NOT NULL,
 	[apellido] [nvarchar](100) NOT NULL,
@@ -32,14 +32,14 @@ CREATE TABLE [dbo].[LAB_Temp_<Efector>ResultadoEncabezado](
 	[idProvincia] INT,
 	[telefonoFijo] [nvarchar](20),
 	[telefonoCelular] [nvarchar](20)
- CONSTRAINT [PK_Tmp_<Efector>ResultadoEncabezado] PRIMARY KEY CLUSTERED
+ CONSTRAINT [PK_Tmp_<efector>ResultadoEncabezado] PRIMARY KEY CLUSTERED
 (
 	[idProtocolo] ASC,
 	[idEfector] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-GRANT DELETE ON [dbo].[LAB_Temp_<Efector>ResultadoEncabezado] TO [linked_desde_efector]
-GRANT INSERT ON [dbo].[LAB_Temp_<Efector>ResultadoEncabezado] TO [linked_desde_efector]
-GRANT SELECT ON [dbo].[LAB_Temp_<Efector>ResultadoEncabezado] TO [linked_desde_efector]
-GRANT UPDATE ON [dbo].[LAB_Temp_<Efector>ResultadoEncabezado] TO [linked_desde_efector]
+GRANT DELETE ON [dbo].[LAB_Temp_<efector>ResultadoEncabezado] TO [linked_desde_efector]
+GRANT INSERT ON [dbo].[LAB_Temp_<efector>ResultadoEncabezado] TO [linked_desde_efector]
+GRANT SELECT ON [dbo].[LAB_Temp_<efector>ResultadoEncabezado] TO [linked_desde_efector]
+GRANT UPDATE ON [dbo].[LAB_Temp_<efector>ResultadoEncabezado] TO [linked_desde_efector]
