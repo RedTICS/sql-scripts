@@ -12,7 +12,7 @@
 | Añelo | 6	|10.1.62.53	|SIPSAnelo| 1.5(B) ✓|
 | Chocon |7	|10.1.62.53	|SIPSChocon| 1.5(B) ✓|
 | Zapala | 33	|SRVZAPALA	- 10.8.8.15 |SIntegralH| 1.5(A) ✓|
-| Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | |
+| Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | 1.5(H) ✓|
 | Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |
 | Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | 1.5(B) ✓|
 | Buta | 53	|HTALBUTA	- 10.25.72.110 |SIntegralH | 1.5(G) ✓|
@@ -23,7 +23,7 @@
 | Piedra | 185	| SQLPIEDRA	- 10.19.8.8 |SIntegralH | 1.5(A) ✓|
 | Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH | 1.5(F) ✓|
 | Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5(B) ✓|
-| Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D)|
+| Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D) ✓|
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
 | Heller | 221	|SQLHELLER - 10.1.104.37 - No tiene sistema de lab |SIntegralH ||
 | Laboratorio Central | 228	| 10.1.62.53 |LaboratorioCentral | 1.5(E)|
@@ -36,6 +36,7 @@ Versiones:
 - 1.5(E): script del laboratorio central que contiene diferencias con los otros scripts en la validacion de los estudios
 - 1.5(F): script de Picun que contiene varias diferencias y mucha menos funcionalidad
 - 1.5(G): vta_LAB_Antibiograma NO tiene el usuario que lo valido pero no tiene telefono fijo o celular (es similara al 1.5(A))
+- 1.5(H): carece de la mayoría de datos (usado en Loncopue)
 
 
 ## Sincronización de laboratorio con efectores

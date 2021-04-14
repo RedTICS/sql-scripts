@@ -1,6 +1,6 @@
 
 /*
- * Version: 1.5 (A - vta_LAB_Antibiograma tiene el usuario que lo valido)
+ * Version: 1.5 (D - no tiene usuario ni tipoMuestra - Ej: Picun)
  * Update: 2016-09-26 - Julio: Agrego la columna baja en LAB_Temp_ResultadoEncabezado y en el select de los protocolos
  * Update: 2020-11-06 - Orlando: Agrego localidad, provincia, y telefonos a la migracion
  * Update: 2020-11-11 - Orlando: Unificación de scripts entre enfectores (cantidad de dias tomado desde tabla de configuracion en el efector)
@@ -20,6 +20,7 @@ create table #TableFinal (idProtocolo int)
 
 
 insert into #TableFinal
+--select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
 
 SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
@@ -39,8 +40,8 @@ SELECT DISTINCT P.idProtocolo, P.idEfector, Pac.apellido, Pac.nombre, P.edad,
 			 null as idSolicitudScreening, null as fechaRecibeScreening,
        LTRIM(RTRIM(replace(replace(REPLACE( replace(replace(replace(P.observacionesResultados, CHAR(10),' '), CHAR(13), ''), char(9),' '), ' ','<>'),'><',''),'<>',' ')))  as observacionesResultados,
 			 -- P.observacionesResultados,  -- Reemplazado el 2020-11-11 por la linea de arriba utilizada en Cultralco
-       M.nombre as tipoMuestra, P.baja,
-       Pac.idLocalidad, Pac.idProvincia, Pac.telefonoFijo, Pac.telefonoCelular
+       null as tipoMuestra, P.baja,
+       Pac.idLocalidad, Pac.idProvincia, '' as telefonoFijo, '' as telefonoCelular
 FROM         dbo.LAB_Protocolo AS P INNER JOIN
                       dbo.Sys_Paciente AS Pac ON P.idPaciente = Pac.idPaciente INNER JOIN
                       dbo.LAB_Origen AS O ON P.idOrigen = O.idOrigen INNER JOIN

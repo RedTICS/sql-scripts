@@ -20,7 +20,6 @@ create table #TableFinal (idProtocolo int)
 
 
 insert into #TableFinal
---select distinct idProtocolo from lab_protocolo where numero in (13297,16340,16354,26534,34528,38809,34529)
 
 SELECT DISTINCT P.idProtocolo FROM dbo.LAB_DetalleProtocolo as  DP
 inner join LAB_Protocolo as P on P.idProtocolo=DP.idProtocolo
