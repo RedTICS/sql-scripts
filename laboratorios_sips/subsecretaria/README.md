@@ -12,6 +12,7 @@
 | Añelo | 6	|10.1.62.53	|SIPSAnelo| 1.5(B) ✓|
 | Chocon |7	|10.1.62.53	|SIPSChocon| 1.5(B) ✓|
 | Zapala | 33	|SRVZAPALA	- 10.8.8.15 |SIntegralH| 1.5(A) ✓|
+| Las Lajas | 35 | 10.15.8.15 | SIntegralH | 1.5(I) ✓| 
 | Loncopue | 37	|SQLLONCOPUE - 10.14.8.10	|SIntegralH | 1.5(H) ✓|
 | Alumine | 40|	SQLALUMINE	- 10.1.65.253 |SIntegralH| |
 | Chosmalal | 51|	CHOSMA - 10.5.72.7	|SIntegralH | 1.5(B) ✓|
@@ -27,7 +28,6 @@
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
 | Heller | 221	|SQLHELLER - 10.1.104.37 - No tiene sistema de lab |SIntegralH ||
 | Laboratorio Central | 228	| 10.1.62.53 |LaboratorioCentral | 1.5(E)|
-| Las Lajas | 35 | 10.15.8.15 | SIntegralH | 1.5(I) ✓| 
 
 Versiones:
 - 1.5(A): vta_LAB_Antibiograma NO tiene el usuario que lo valido
