@@ -38,7 +38,7 @@ Versiones:
 - 1.5(F): script de Picun que contiene varias diferencias y mucha menos funcionalidad
 - 1.5(G): vta_LAB_Antibiograma NO tiene el usuario que lo valido pero no tiene telefono fijo o celular (es similara al 1.5(A))
 - 1.5(H): carece de la mayoría de datos (usado en Loncopue)
-- 1.5(I): carece de la mayoría de datos (usado en Loncopue)
+- 1.5(I): carece de la mayoría de datos (usado en Las Lajas)
 
 
 ## Sincronización de laboratorio con efectores
