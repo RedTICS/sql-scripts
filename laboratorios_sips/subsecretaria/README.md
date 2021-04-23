@@ -27,6 +27,7 @@
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
 | Heller | 221	|SQLHELLER - 10.1.104.37 - No tiene sistema de lab |SIntegralH ||
 | Laboratorio Central | 228	| 10.1.62.53 |LaboratorioCentral | 1.5(E)|
+| Las Lajas | 35 | 10.15.8.15 | SIntegralH | 1.5(I) ✓| 
 
 Versiones:
 - 1.5(A): vta_LAB_Antibiograma NO tiene el usuario que lo valido
@@ -37,6 +38,7 @@ Versiones:
 - 1.5(F): script de Picun que contiene varias diferencias y mucha menos funcionalidad
 - 1.5(G): vta_LAB_Antibiograma NO tiene el usuario que lo valido pero no tiene telefono fijo o celular (es similara al 1.5(A))
 - 1.5(H): carece de la mayoría de datos (usado en Loncopue)
+- 1.5(I): carece de la mayoría de datos (usado en Loncopue)
 
 
 ## Sincronización de laboratorio con efectores

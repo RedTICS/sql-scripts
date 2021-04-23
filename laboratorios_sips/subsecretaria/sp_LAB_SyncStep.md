@@ -46,6 +46,11 @@ Por cada uno de los efectores que esta pendiente su inyección dentro de SIPS, s
 - Crear una entrada en la tabla SIPS.dbo.LAB_EstadoSyncGeneral que contenga el id del efector, la tabla de encabezado y detalle creada anteriormente, y los minutos mínimos entre sincronización (ingresar en todas las fechas `2001-01-01`). [central]
 - Crear una tabla en el efector usando como base `efectores/unificados/table_LAB_SyncStatus.sql` [efector]
 - Crear una tabla en el efector usando como base `efectores/unificados/table_LAB_SyncConfig.sql`[efector]
-- Crear un linked server con el servidor de la subsecretaria (servidorUpstream: `110.1.62.530.1.62.53` dbUpstream: `SIPS.dbo`) [efector]
+- Crear un linked server con el servidor de la subsecretaria (servidorUpstream: `10.1.62.53` dbUpstream: `SIPS.dbo`) [efector]
 - Crear una entrada en la tabla `LAB_SyncConfig` del efector indicando el id del efector que corresponde, el linked server, base de datos (generalmente SIPS.dbo), y la cantidad de dias a sincronizar hacia atrás. [efector]
 - Verificar que la tabla `LAB_Temp_ResultadoEncabezado` contenga los campos `idLocalidad`, `idProvincia`, `telefonoFijo`, `telefonoCelular` (ver script `alter_encabezado.sql`)[efector]`
+
+## Si el efector a instalar no tiene sincronización previa
+
+- Antes de comenzar los pasos anteriores ejecutar el script `efectores/unificados/table_LAB_Temp_ResultadoEncabezado.sql`
+- Antes de comenzar los pasos anteriores ejecutar el script `efectores/unificados/table_LAB_Temp_ResultadoDetalle.sql`
