@@ -11,7 +11,8 @@ CREATE TABLE [dbo].[LAB_EstadoSyncGeneral](
 	[ultimoSyncRegistrosDetalle] [int] NULL,
 	[minutosMinimoSyncEfector] [int] NULL,
 	[minutosMinimoSyncPrincipal] [int] NULL,
-    [nombreEfector] [varchar](100) NULL,
+  [nombreEfector] [varchar](100) NULL,
+  [sensorPingPRTG] [varchar](1001) NULL
  CONSTRAINT [LAB_EstadoSyncGeneral_PK] PRIMARY KEY CLUSTERED
 (
 	[idEfector] ASC
