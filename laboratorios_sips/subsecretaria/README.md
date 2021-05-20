@@ -22,7 +22,7 @@
 | Junin | 71|	SQLJUNIN - 10.9.72.25 |SIntegralH | 1.5(A) ✓|
 | Villa | 73|	VILLA	- 10.20.8.19 |SIntegralH | 1.5(A) ✓|
 | Piedra | 185	| SQLPIEDRA	- 10.19.8.8 |SIntegralH | 1.5(A) ✓|
-| Picun | 187	|HTAL_PICUN	- 10.18.8.105 |SIntegralH | 1.5(F) ✓|
+| Picun | 187	|HTAL_PICUN	- 10.18.8.10 |SIntegralH | 1.5(F) ✓|
 | Cutral Co | 188	|CUTRALCO	- 10.7.8.21|SIntegralH | 1.5(B) ✓|
 | Castro | 205	|SQLAGL	- 10.1.72.7 |SIntegralHLab | 1.5(D) ✓|
 | Bouquet | 216	|BOUQUET	- 10.1.46.7 |SIntegralH | 1.5(B) ✓|
